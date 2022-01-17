@@ -1059,6 +1059,24 @@ hisoka.sendMessage(m.chat, {audio: {url: data.medias[7].url}})
 m.reply(mess.error)
 })}
 break
+case 'yts': case 'ytsearch': {
+if (!q) throw(mess.wrongFormat)
+await m.reply(mess.wait)
+srch = `${q}`
+var aramas = await yts(srch);
+aramat = aramas.all 
+var tbuff = await getBuffer(aramat[0].image)
+var ytresult = '';
+ytresult += '*----「 YOUTUBE SEARCH 」----*\n\n'
+aramas.all.map((video) => {
+ytresult += '*Title:* ' + video.title + '\n'
+ytresult += '*Link:* ' + video.url + '\n'
+ytresult += '*Durasi:* ' + video.timestamp + '\n'
+ytresult += '*Views:* ' + video.views + '\n'
+ytresult += '*Upload:* ' + video.ago + '\n\n'
+})};
+hisoka.sendMessage(from, {image: tbuff, caption: ytresult}, {quoted:m})
+break
 default:
 if (isVO){
 if (m.mtype == 'viewOnceMessage' === true ){
