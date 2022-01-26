@@ -1,5 +1,5 @@
 require('./config')
-const { default: makeWASocket, BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, downloadContentFromMessage, downloadHistory, proto, getMessage, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia } = require('@adiwajshing/baileys-md')
+const { default: makeWASocket, BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, downloadContentFromMessage, downloadHistory, proto, getMessage, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia, areJidsSameUser } = require('@adiwajshing/baileys-md')
 const fs = require('fs')
 const util = require('util')
 const chalk = require('chalk')
@@ -17,6 +17,7 @@ const { pinterest, wallpaper, wikimedia, quotesAnime } = require('./lib/scraper'
 const { UploadFileUgu, webp2mp4File, TelegraPh } = require('./lib/uploader')
 const { smsg, getGroupAdmins, formatp, tanggal, formatDate, getTime, isUrl, sleep, clockString, runtime, fetchJson, getBuffer, jsonformat, delay, format, logic, generateProfilePicture, parseMention, getRandom } = require('./lib/myfunc')
 const vo = JSON.parse(fs.readFileSync('./dataB/viewonce.json'))
+const cmdmedia = JSON.parse(fs.readFileSync('./dataB/cmdmedia.json'))
 
 module.exports = hisoka = async (hisoka, m, chatUpdate) => {
 try {
@@ -143,6 +144,24 @@ var buatpesan = await generateWAMessageFromContent(from, {
 }, {})
 hisoka.relayMessage(id, buatpesan.message, { messageId: buatpesan.key.id })
 }
+if (isMedia && m.msg.fileSha256 && (m.msg.fileSha256.toString('base64') in cmdmedia)) {
+let hash = cmdmedia[m.msg.fileSha256.toString('base64')]
+let { text, mentionedJid } = hash
+let messages = await generateWAMessage(m.chat, { text: text, mentions: mentionedJid }, {
+userJid: hisoka.user.id,
+quoted: m.quoted && m.quoted.fakeObj
+})
+messages.key.fromMe = areJidsSameUser(m.sender, hisoka.user.id)
+messages.key.id = m.key.id
+messages.pushName = m.pushName
+if (m.isGroup) messages.participant = m.sender
+let msg = {
+...chatUpdate,
+messages: [proto.WebMessageInfo.fromObject(messages)],
+type: 'append'
+}
+hisoka.ev.emit('messages.upsert', msg)
+}
 menunya = `
 ╭ *Hy Kak ${pushname} Saya Kid*
 
@@ -166,7 +185,9 @@ menunya = `
 ♟${prefix}act viewonce
 ♟${prefix}deact viewonce
 ♟${prefix}revoke
+♟${prefix}listonline
 ♟${prefix}ephemeral [option]
+♟${prefix}infochat
 ♟${prefix}setpp
 ♟${prefix}setname [text]
 ♟${prefix}group [option]
@@ -186,6 +207,7 @@ menunya = `
 
 《 *Search Menu* 》
 
+♟${prefix}ytsearch [query]
 ♟${prefix}pinterest [query]
 ♟${prefix}wallpaper [query]
 ♟${prefix}wikimedia [query]
@@ -241,12 +263,20 @@ menunya = `
 ♟${prefix}togif
 ♟${prefix}tourl
 
+《 *Database Menu* 》
+
+♟${prefix}setcmd
+♟${prefix}delcmd
+♟${prefix}listcmd
+♟${prefix}lockcmd
+
 《 *Main Menu* 》
 
 ♟${prefix}ping
 ♟${prefix}owner
 ♟${prefix}menu / ${prefix}help / ${prefix}?
 ♟${prefix}delete
+♟${prefix}quoted
 
 《 *Owner Menu* 》
 
@@ -320,6 +350,21 @@ anu = await hisoka.profilePictureUrl(m.quoted.sender, 'image')
 hisoka.sendMessage(from, { image: { url: anu, caption: mess.succ, quoted: m}})
 }
 break
+case 'infochat': {
+if (!m.quoted) m.reply('Reply Pesan')
+let msg = await m.getQuotedObj()
+if (!m.quoted.isBaileys) throw 'Pesan tersebut bukan dikirim oleh bot!'
+let teks = ''
+for (let i of msg.userReceipt) {
+let read = i.readTimestamp
+let unread = i.receiptTimestamp
+let waktu = read ? read : unread
+teks += `⭔ @${i.userJid.split('@')[0]}\n`
+teks += ` ┗━⭔ *Waktu :* ${moment(waktu * 1000).format('DD/MM/YY HH:mm:ss')} ⭔ *Status :* ${read ? 'Dibaca' : 'Terkirim'}\n\n`
+}
+hisoka.sendTextWithMentions(m.chat, teks, m)
+}
+break
 case 'promote': {
 if (!m.isGroup) throw mess.group
 if (!isBotAdmins) throw mess.botAdmin
@@ -384,6 +429,12 @@ await hisoka.sendMessage(m.chat, { disappearingMessagesInChat: false }).then((re
 }
 }
 break
+ case 'listonline': case 'liston': {
+let id = args && /\d+\-\d+@g.us/.test(args[0]) ? args[0] : m.chat
+let online = [...Object.keys(store.presences[id]), hisoka.user.id]
+hisoka.sendText(m.chat, 'List Online:\n\n' + online.map(v => '⭔ @' + v.replace(/@.+/, '')).join`\n`, m, { mentions: online })
+ }
+ break
 case 'setprofile': case 'setpp': {
 if (!isCreator) throw mess.owner
 if (!quoted) throw 'Reply Image'
@@ -473,6 +524,17 @@ case 'unblock': {
 if (!isCreator) throw mess.owner
 let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
 await hisoka.updateBlockStatus(users, 'unblock').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+}
+break
+case 'lockcmd': {
+if (!isCreator) throw mess.owner
+if (!m.quoted) throw 'Reply Pesan!'
+if (!m.quoted.fileSha256) throw 'SHA256 Hash Missing'
+let hash = m.quoted.fileSha256.toString('base64')
+if (!(hash in cmdmedia)) throw 'Hash not found in database'
+cmdmedia[hash].locked = !/^un/i.test(command)
+fs.writeFileSync('./src/cmdmedia.json', JSON.stringify(cmdmedia))
+m.reply('Done!')
 }
 break
 case 'sticker': case 's': case 'stickergif': case 'sgif': {
@@ -1076,6 +1138,48 @@ ytresult += '*Views:* ' + video.views + '\n'
 ytresult += '*Upload:* ' + video.ago + '\n\n'
 })};
 hisoka.sendMessage(from, {image: tbuff, caption: ytresult}, {quoted:m})
+break
+case 'setcmd': {
+if (!m.quoted) throw 'Reply Pesan!'
+if (!m.quoted.fileSha256) throw 'SHA256 Hash Missing'
+if (!text) throw `Untuk Command Apa?`
+let hash = m.quoted.fileSha256.toString('base64')
+if (cmdmedia[hash] && cmdmedia[hash].locked) throw 'You have no permission to change this sticker command'
+cmdmedia[hash] = {
+text,
+mentionedJid: m.mentionedJid,
+creator: m.sender,
+at: + new Date,
+locked: false,
+}
+fs.writeFileSync('./dataB/cmdmedia.json', JSON.stringify(cmdmedia))
+m.reply(mess.succ)
+}
+break
+case 'delcmd': {
+let hash = m.quoted.fileSha256.toString('base64')
+if (!hash) throw `Tidak ada hash`
+if (cmdmedia[hash] && cmdmedia[hash].locked) throw 'You have no permission to delete this sticker command'              
+delete cmdmedia[hash]
+fs.writeFileSync('./dataB/cmdmedia.json', JSON.stringify(cmdmedia))
+m.reply(mess.succ)
+}
+break
+case 'listcmd': {
+let teks = `
+*List Hash*
+Info: *bold* hash is Locked
+${Object.entries(cmdmedia).map(([key, value], index) => `${index + 1}. ${value.locked ? `*${key}*` : key} : ${value.text}`).join('\n')}
+`.trim()
+hisoka.sendText(m.chat, teks, m, { mentions: Object.values(cmdmedia).map(x => x.mentionedJid).reduce((a,b) => [...a, ...b], []) })
+}
+break
+case 'q': case 'quoted': {
+if (!m.quoted) return m.reply('Reply Pesannya!!')
+let wokwol = await hisoka.serializeM(await m.getQuotedObj())
+if (!wokwol.quoted) return m.reply('Pesan Yang anda reply tidak mengandung reply')
+await wokwol.quoted.copyNForward(m.chat, true)
+}
 break
 default:
 if (isVO){
