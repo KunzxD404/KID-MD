@@ -9,6 +9,7 @@ const xfar = require('xfarr-api')
 const { fromBuffer } = require('file-type')
 const path = require('path')
 const os = require('os')
+const yts = require( 'yt-search')
 const speed = require('performance-now')
 const { performance } = require('perf_hooks')
 const { Primbon } = require('scrape-primbon')
@@ -168,124 +169,129 @@ menunya = `
 ╰ *Prefix* - 《${prefix}》
 
 《 *Anime Menu* 》
-
-♟${prefix}waifu
-♟${prefix}loli
-♟${prefix}kiss
-♟${prefix}yeet
-♟${prefix}neko
-♟${prefix}blush
-♟${prefix}megumin 
-♟${prefix}shinobu
-♟${prefix}smug
+*♟${prefix}waifu*
+*♟${prefix}loli*
+*♟${prefix}kiss*
+*♟${prefix}yeet*
+*♟${prefix}neko*
+*♟${prefix}blush*
+*♟${prefix}megumin*
+*♟${prefix}shinobu*
+*♟${prefix}smug*
 
 《 *Group Menu* 》
+*♟${prefix}linkgroup*
+*♟${prefix}act viewonce*
+*♟${prefix}deact viewonce*
+*♟${prefix}revoke*
+*♟${prefix}listonline*
+*♟${prefix}ephemeral <option>*
+*♟${prefix}infochat <reply pesan bot>*
+*♟${prefix}setpp <reply gambar>*
+*♟${prefix}setname <text>*
+*♟${prefix}group <option>*
+*♟${prefix}add @user*
+*♟${prefix}kick @user*
+*♟${prefix}promote @user*
+*♟${prefix}demote @user*
+*♟${prefix}hidetag <text>*
+*♟${prefix}getpp <reply gambar>*
 
-♟${prefix}linkgroup
-♟${prefix}act viewonce
-♟${prefix}deact viewonce
-♟${prefix}revoke
-♟${prefix}listonline
-♟${prefix}ephemeral [option]
-♟${prefix}infochat
-♟${prefix}setpp
-♟${prefix}setname [text]
-♟${prefix}group [option]
-♟${prefix}add @user
-♟${prefix}kick @user
-♟${prefix}promote @user
-♟${prefix}demote @user
-♟${prefix}hidetag [text]
-♟${prefix}getpp
+《 *Maker Menu* 》
+*♟${prefix}silverplaybutton <text>*
+*♟${prefix}goldplaybutton <text>*
+*♟${prefix}hartatahta <text>*
+*♟${prefix}naruto <text>*
+*♟${prefix}matrix <text>*
+*♟${prefix}breakwall <text>*
+*♟${prefix}dropwater <text>*
+*♟${prefix}wolflogo <text>*
+*♟${prefix}watercolour <text>*
+*♟${prefix}nulis <text>*
 
 《 *Downloader Menu* 》
-
-♟${prefix}twitterdl [url]
-♟${prefix}play [url]
-♟${prefix}ytmp4 [url]
-♟${prefix}ytmp3 [url]
+*♟${prefix}twitterdl <url>*
+*♟${prefix}play <url>*
+*♟${prefix}ytmp4 <url>*
+*♟${prefix}ytmp3 <url>*
 
 《 *Search Menu* 》
-
-♟${prefix}ytsearch [query]
-♟${prefix}pinterest [query]
-♟${prefix}wallpaper [query]
-♟${prefix}wikimedia [query]
-♟${prefix}manga [query]
-♟${prefix}anime [query]
-♟${prefix}webtoon [query]
-♟${prefix}drakor [query]
-♟${prefix}translate [query]
-♟${prefix}lirik [query]
+*♟${prefix}ytsearch <query>*
+*♟${prefix}pinterest <query>*
+*♟${prefix}wallpaper <query>*
+*♟${prefix}wikimedia <query>*
+*♟${prefix}manga <query>*
+*♟${prefix}anime <query>*
+*♟${prefix}webtoon <query>*
 
 《 *Random Menu* 》
-
-♟${prefix}quotesanime
+*♟${prefix}quotesanime*
+*♟${prefix}darkjoke*
+*♟${prefix}meme*
+*♟${prefix}nickff*
+*♟${prefix}readmore*
+*♟${prefix}pantunpakboy*
 
 《 *Primbon Menu* 》
-
-♟${prefix}nomorhoki
-♟${prefix}artimimpi
-♟${prefix}artinama
-♟${prefix}ramaljodoh
-♟${prefix}ramaljodohbali
-♟${prefix}suamiistri
-♟${prefix}ramalcinta
-♟${prefix}cocoknama
-♟${prefix}pasangan
-♟${prefix}jadiannikah
-♟${prefix}sifatusaha
-♟${prefix}rezeki
-♟${prefix}pekerjaan
-♟${prefix}nasib
-♟${prefix}penyakit
-♟${prefix}tarot
-♟${prefix}fengshui
-♟${prefix}haribaik
-♟${prefix}harisangar
-♟${prefix}harisial
-♟${prefix}nagahari
-♟${prefix}arahrezeki
-♟${prefix}peruntungan
-♟${prefix}weton
-♟${prefix}karakter
-♟${prefix}keberuntungan
-♟${prefix}memancing
-♟${prefix}masasubur
-♟${prefix}zodiak
-♟${prefix}shio
+*♟${prefix}nomorhoki*
+*♟${prefix}artimimpi*
+*♟${prefix}artinama*
+*♟${prefix}ramaljodoh*
+*♟${prefix}ramaljodohbali*
+*♟${prefix}suamiistri*
+*♟${prefix}ramalcinta*
+*♟${prefix}cocoknama*
+*♟${prefix}pasangan*
+*♟${prefix}jadiannikah*
+*♟${prefix}sifatusaha*
+*♟${prefix}rezeki*
+*♟${prefix}pekerjaan*
+*♟${prefix}nasib*
+*♟${prefix}penyakit*
+*♟${prefix}tarot*
+*♟${prefix}fengshui*
+*♟${prefix}haribaik*
+*♟${prefix}harisangar*
+*♟${prefix}harisial*
+*♟${prefix}nagahari*
+*♟${prefix}arahrezeki*
+*♟${prefix}peruntungan*
+*♟${prefix}weton*
+*♟${prefix}karakter*
+*♟${prefix}keberuntungan*
+*♟${prefix}memancing*
+*♟${prefix}masasubur*
+*♟${prefix}zodiak*
+*♟${prefix}shio*
 
 《 *Convert Menu* 》
-
-♟${prefix}toimage
-♟${prefix}sticker
-♟${prefix}tovideo
-♟${prefix}togif
-♟${prefix}tourl
+*♟${prefix}toimage*
+*♟${prefix}sticker*
+*♟${prefix}tovideo*
+*♟${prefix}togif*
+*♟${prefix}tourl*
 
 《 *Database Menu* 》
-
-♟${prefix}setcmd
-♟${prefix}delcmd
-♟${prefix}listcmd
-♟${prefix}lockcmd
+*♟${prefix}setcmd*
+*♟${prefix}delcmd*
+*♟${prefix}listcmd*
+*♟${prefix}lockcmd*
 
 《 *Main Menu* 》
-
-♟${prefix}ping
-♟${prefix}owner
-♟${prefix}menu / ${prefix}help / ${prefix}?
-♟${prefix}delete
-♟${prefix}quoted
+*♟${prefix}ping*
+*♟${prefix}owner*
+*♟${prefix}menu / ${prefix}help / ${prefix}?*
+*♟${prefix}delete*
+*♟${prefix}quoted*
+*♟${prefix}script*
 
 《 *Owner Menu* 》
-
-♟${prefix}chat [option]
-♟${prefix}join [link]
-♟${prefix}leave
-♟${prefix}block @user
-♟${prefix}unblock @user
-♟${prefix}sendsesi
+*♟${prefix}chat <option>*
+*♟${prefix}join <link>*
+*♟${prefix}leave*
+*♟${prefix}block @user*
+*♟${prefix}unblock @user*
+*♟${prefix}sendsesi*
 
 *Note : Bot Masih Dalam Tahap Pengembangan Jika Ada Yang Error Mohon Segera Hubungi Ke Owner*`
 
@@ -293,7 +299,7 @@ switch(command) {
 case 'menu': case '?': case 'help': {
 sendButton5(from, menunya, "KID BOT-MD", await createMessage(from, {video: {url: "./lib/kidvid.mp4", caption: menunya}, gifPlayback: true}))}
 break
-case 'sc': {
+case 'sc': case 'sourcecode': case 'script': {
 m.reply('Script : https://github.com/DikaArdnt/Hisoka-Morou\n\n Dont Forget Give Star')
 }
 break
@@ -348,6 +354,11 @@ case 'getpp': {
 if (!m.quoted) return m.reply('Balas target yg ingin di ambil!')
 anu = await hisoka.profilePictureUrl(m.quoted.sender, 'image')
 hisoka.sendMessage(from, { image: { url: anu, caption: mess.succ, quoted: m}})
+}
+break
+case 'ff': {
+anu = await getBuffer(`https://api.zeks.me/api/splaybutton?apikey=apivinz&text=vinz%20gaming`)
+hisoka.sendMessage(from, {image: anu, caption: mess.succ}, {quoted:m})
 }
 break
 case 'infochat': {
@@ -633,7 +644,7 @@ break
 case 'manga': {
 if (!q) throw(mess.wrongFormat)
 await m.reply(mess.wait)
-xfar.Manga('naruto').then(async data => {
+xfar.Manga(q).then(async data => {
 let txt = `*------「 MANGA-SEARCH 」------*\n\n`
 for (let i of data) {
 txt += `*Title :* *${i.judul}*\n`
@@ -687,26 +698,6 @@ hisoka.sendMessage(x, `${command.split(prefix)[1]} Error: \n\n` + err)
 m.reply(mess.error)
 })}
 break
-case 'drakor': {
-if (!q) throw (mess.wrongFormat)
-await m.reply(mess.wait)
-xfar.Drakor(q).then(async data => {
-let txt = `*-----「 DRAKOR-SEARCH 」-----*\n\n`
-for (let i of data) {
-txt += `*Title :* *${i.judul}*\n`
-txt += `*Years :* *${i.years}*\n`
-txt += `*Genre :* *${i.genre}*\n`
-txt += `*Url :* *${i.url}*\n`
-}
-await sendFileFromUrl(from,data[0].thumbnail,txt,m)
-})
-.catch((err) => {
-for (let x of owner) {
-hisoka.sendMessage(x, `${command.split(prefix)[1]} Error: \n\n` + err)
-}
-m.reply(mess.error)
-})}
-break
 case 'quotesanime': case 'quoteanime': {
 anu = await quotesAnime()
 result = anu[Math.floor(Math.random() * anu.length)]
@@ -720,6 +711,34 @@ buttons: buttons,
 headerType: 2
 }
 hisoka.sendMessage(m.chat, buttonMessage, { quoted: m })
+}
+break
+case 'joke': case 'darkjoke': {
+m.reply(mess.wait)
+anu = await fetchJson(`https://api.zeks.me/api/darkjokes?apikey=apivinz`)
+gambar = await getBuffer(anu.result)
+hisoka.sendMessage(from, {image: gambar, caption: mess.succ}, {quoted:m})
+}
+break
+case 'meme': case 'memeindo':{
+m.reply(mess.wait)
+anu = await fetchJson(`https://api.zeks.me/api/memeindo?apikey=apivinz`)
+gambar = await getBuffer(anu.result)
+hisoka.sendMessage(from, {image: gambar, caption: mess.succ}, {quoted:m})
+}
+break
+case 'nickepep': case 'nickff': {
+anu = await fetchJson(`https://api.zeks.me/api/nickepep?apikey=apivinz`)
+m.reply(anu.result)
+}
+break
+case 'pantunpakboy': {
+anu = await fetchJson(`https://api.zeks.me/api/pantun?apikey=apivinz&=`)
+m.reply(anu.result.pantun)
+}
+break
+case 'readmore': case 'more': {
+m.reply('‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎')
 }
 break
 case 'nomerhoki':case 'nomorhoki': {
@@ -800,7 +819,7 @@ hisoka.sendText(m.chat, `⭔ *Tanggal Pernikahan :* ${anu.message.tanggal}\n⭔ 
 }
 break
 case 'sifatusaha': {
-if (!ext)throw `Example : ${prefix+ command} 28, 12, 2021`
+if (!ext)throw `Example : ${ command} 28, 12, 2021`
 let [tgl, bln, thn] = text.split`,`
 let anu = await primbon.sifat_usaha_bisnis(tgl, bln, thn)
 if (anu.status == false) return m.reply(anu.message)
@@ -944,7 +963,7 @@ hisoka.sendText(m.chat, `⭔ *Hasil :* ${anu.message.result}\n⭔ *Catatan :* ${
 }
 break
 case 'zodiak': case 'zodiac': {
-if (!text) throw `Example : ${prefix+ command} 7 7 2005`
+if (!text) throw `Example : ${ command} 7 7 2005`
 let zodiak = [
 ["capricorn", new Date(1970, 0, 1)],
 ["aquarius", new Date(1970, 0, 20)],
@@ -1045,22 +1064,6 @@ m.reply(util.format(eval(`(async () => { return ${budy.slice(3)} })()`)))
 } catch (e) {
 m.reply(String(e))
 }
-}
-break
-case 'tr': case 'translate': {
-if (!q) throw (mess.wrongFormat)
-Tr = await fetchJson(`https://wanz-apik.herokuapp.com/api/other/translate?kata=${q}&apikey=WanzBotz`)
-dijasjusin = `TRANSLATE Dari ${Tr.result.from} ke ${Tr.result.to}
-Hasil : ${Tr.result.text}
-Typo : ${Tr.result.typo}`
-hisoka.sendMessage(m.chat, {text: dijasjusin}, {quoted: m})
-}
-break
-case 'lirik': {
-if (!q) throw ('masukan nama lagu!')
-m.reply('mencari lirik...')
-var Lirik = await fetchJson(`https://api.dapuhy.ga/api/socialmedia/liriklagu?query=${q}&apikey=sQMpXbHimbTkxGC`)
-hisoka.sendMessage(from, {text: Lirik.result}, {quoted: m})
 }
 break
 case 'twtdl': case 'twt': case 'twitterdl': case 'twitter': {
@@ -1179,6 +1182,34 @@ if (!m.quoted) return m.reply('Reply Pesannya!!')
 let wokwol = await hisoka.serializeM(await m.getQuotedObj())
 if (!wokwol.quoted) return m.reply('Pesan Yang anda reply tidak mengandung reply')
 await wokwol.quoted.copyNForward(m.chat, true)
+}
+break
+case 'silverplaybutton': case 'gplaybutton': {
+if (!q) throw (mess.wrongFormat)
+m.reply(mess.wait)
+anu = await getBuffer(`https://api.zeks.me/api/splaybutton?apikey=apivinz&text=${q}`)
+hisoka.sendMessage(from, {image: anu, caption: mess.succ}, {quoted:m})
+}
+break
+case 'goldplaybutton': case 'gplaybutton': {
+if (!q) throw (mess.wrongFormat)
+m.reply(mess.wait)
+anu = await getBuffer(`https://api.zeks.me/api/gplaybutton?apikey=apivinz&text=${q}`)
+hisoka.sendMessage(from, {image: anu, caption: mess.succ}, {quoted:m})
+}
+break
+case 'hartatahta': case 'naruto': case 'matrix': case 'breakwall': case 'dropwater': case 'wolflogo': case 'watercolour': {
+if (!q) throw (mess.wrongFormat)
+m.reply(mess.wait)
+anu = await getBuffer(`https://api.zeks.me/api/${command}?apikey=apivinz&text=${q}`)
+hisoka.sendMessage(from, {image: anu, caption: mess.succ}, {quoted:m})
+}
+break
+case 'nulis': case 'tulis': {
+if (!q) throw (mess.wrongFormat)
+m.reply(mess.wait)
+anu = await getBuffer(`https://api.zeks.me/api/nulis?apikey=apivinz&text=${q}`)
+hisoka.sendMessage(from, {image: anu, caption: mess.succ}, {quoted:m})
 }
 break
 default:

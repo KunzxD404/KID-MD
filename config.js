@@ -8,13 +8,13 @@ global.sessionName = 'session'
 global.prefa = ['','!','.','🐦','🐤','🗿']
 global.sp = '⭔'
 global.mess = {
-admin: 'Fitur Khusus Admin Group!',
-botAdmin: 'Bot Harus Menjadi Admin Terlebih Dahulu!',
-owner: 'Fitur Khusus Owner Bot',
-group: 'Fitur Digunakan Hanya Untuk Group!',
-private: 'Fitur Digunakan Hanya Untuk Private Chat!',
-bot: 'Fitur Khusus Pengguna Nomor Bot',
-wait: 'Loading...',
+admin: '*Fitur Khusus Admin Group!*',
+botAdmin: '*Jadikan Bot Sebagai Admin*',
+owner: '*Fitur Khusus Owner Bot*',
+group: '*Fitur Hanya Bisa Digunakan Di Grup*',
+private: 'Fitur Hanya Bisa Digunakan Di Private Chat!',
+wait: '*Sabar kak*...',
+succ: '*nih kak😼*',
 wrongFormat: '*Format salah kak*',
 error: '*Error kak, jika masalah berlanjut silahkan hubungin owner ya:)*'
 }
