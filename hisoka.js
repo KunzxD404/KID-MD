@@ -1,5 +1,5 @@
 require('./config')
-const { default: makeWASocket, BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, downloadContentFromMessage, downloadHistory, proto, getMessage, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia, areJidsSameUser } = require('@adiwajshing/baileys-md')
+const { default: makeWASocket, BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, downloadContentFromMessage, downloadHistory, proto, getMessage, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia, areJidsSameUser } = require('@adiwajshing/baileys')
 const fs = require('fs')
 const util = require('util')
 const chalk = require('chalk')
@@ -10,6 +10,7 @@ const { fromBuffer } = require('file-type')
 const path = require('path')
 const os = require('os')
 const yts = require( 'yt-search')
+const hxz = require("hxz-api");
 const speed = require('performance-now')
 const { performance } = require('perf_hooks')
 const { Primbon } = require('scrape-primbon')
@@ -18,7 +19,26 @@ const { pinterest, wallpaper, wikimedia, quotesAnime } = require('./lib/scraper'
 const { UploadFileUgu, webp2mp4File, TelegraPh } = require('./lib/uploader')
 const { smsg, getGroupAdmins, formatp, tanggal, formatDate, getTime, isUrl, sleep, clockString, runtime, fetchJson, getBuffer, jsonformat, delay, format, logic, generateProfilePicture, parseMention, getRandom } = require('./lib/myfunc')
 const vo = JSON.parse(fs.readFileSync('./dataB/viewonce.json'))
-const cmdmedia = JSON.parse(fs.readFileSync('./dataB/cmdmedia.json'))
+
+global.db = JSON.parse(fs.readFileSync('./dataB/database.json'))
+if (global.db) global.db = {
+sticker: {},
+database: {},
+game: {},
+others: {},
+...(global.db || {})
+}
+let tebaklagu = db.game.tebaklagu = []
+let _family100 = db.game.family100 = []
+let kuismath = db.game.math = []
+let tebakgambar = db.game.tebakgambar = []
+let tebakkata = db.game.tebakkata = []
+let caklontong = db.game.lontong = []
+let caklontong_desk = db.game.lontong_desk = []
+let tebakkalimat = db.game.kalimat = []
+let tebaklirik = db.game.lirik = []
+let tebaktebakan = db.game.tebakan = []
+let vote = db.others.vote = []
 
 module.exports = hisoka = async (hisoka, m, chatUpdate) => {
 try {
@@ -163,6 +183,234 @@ type: 'append'
 }
 hisoka.ev.emit('messages.upsert', msg)
 }
+this.game = this.game ? this.game : {}
+let room = Object.values(this.game).find(room => room.id && room.game && room.state && room.id.startsWith('tictactoe') && [room.game.playerX, room.game.playerO].includes(m.sender) && room.state == 'PLAYING')
+if (room) {
+let ok
+let isWin = !1
+let isTie = !1
+let isSurrender = !1
+// m.reply(`[DEBUG]\n${parseInt(m.text)}`)
+if (!/^([1-9]|(me)?nyerah|surr?ender|off|skip)$/i.test(m.text)) return
+isSurrender = !/^[1-9]$/.test(m.text)
+if (m.sender !== room.game.currentTurn) { // nek wayahku
+if (!isSurrender) return !0
+}
+if (!isSurrender && 1 > (ok = room.game.turn(m.sender === room.game.playerO, parseInt(m.text) - 1))) {
+m.reply({
+'-3': 'Game telah berakhir',
+'-2': 'Invalid',
+'-1': 'Posisi Invalid',
+0: 'Posisi Invalid',
+}[ok])
+return !0
+}
+if (m.sender === room.game.winner) isWin = true
+else if (room.game.board === 511) isTie = true
+let arr = room.game.render().map(v => {
+return {
+X: '❌',
+O: '⭕',
+1: '1️⃣',
+2: '2️⃣',
+3: '3️⃣',
+4: '4️⃣',
+5: '5️⃣',
+6: '6️⃣',
+7: '7️⃣',
+8: '8️⃣',
+9: '9️⃣',
+}[v]
+})
+if (isSurrender) {
+room.game._currentTurn = m.sender === room.game.playerX
+isWin = true
+}
+let winner = isSurrender ? room.game.currentTurn : room.game.winner
+let str = `Room ID: ${room.id}
+
+${arr.slice(0, 3).join('')}
+${arr.slice(3, 6).join('')}
+${arr.slice(6).join('')}
+
+${isWin ? `@${winner.split('@')[0]} Menang!` : isTie ? `Game berakhir` : `Giliran ${['❌', '⭕'][1 * room.game._currentTurn]} (@${room.game.currentTurn.split('@')[0]})`}
+❌: @${room.game.playerX.split('@')[0]}
+⭕: @${room.game.playerO.split('@')[0]}
+
+Ketik *nyerah* untuk menyerah dan mengakui kekalahan`
+if ((room.game._currentTurn ^ isSurrender ? room.x : room.o) !== m.chat)
+room[room.game._currentTurn ^ isSurrender ? 'x' : 'o'] = m.chat
+if (room.x !== room.o) await hisoka.sendText(room.x, str, m, { mentions: parseMention(str) } )
+await hisoka.sendText(room.o, str, m, { mentions: parseMention(str) } )
+if (isTie || isWin) {
+delete this.game[room.id]
+}
+}
+this.suit = this.suit ? this.suit : {}
+let roof = Object.values(this.suit).find(roof => roof.id && roof.status && [roof.p, roof.p2].includes(m.sender))
+if (roof) {
+let win = ''
+let tie = false
+if (m.sender == roof.p2 && /^(acc(ept)?|terima|gas|oke?|tolak|gamau|nanti|ga(k.)?bisa|y)/i.test(m.text) && m.isGroup && roof.status == 'wait') {
+if (/^(tolak|gamau|nanti|n|ga(k.)?bisa)/i.test(m.text)) {
+hisoka.sendTextWithMentions(m.chat, `@${roof.p2.split`@`[0]} menolak suit, suit dibatalkan`, m)
+delete this.suit[roof.id]
+return !0
+}
+roof.status = 'play'
+roof.asal = m.chat
+clearTimeout(roof.waktu)
+//delete roof[roof.id].waktu
+hisoka.sendText(m.chat, `Suit telah dikirimkan ke chat
+
+@${roof.p.split`@`[0]} dan 
+@${roof.p2.split`@`[0]}
+
+Silahkan pilih suit di chat masing"
+klik https://wa.me/${botNumber.split`@`[0]}`, m, { mentions: [roof.p, roof.p2] })
+if (!roof.pilih) hisoka.sendText(roof.p, `Silahkan pilih \n\nBatu🗿\nKertas📄\nGunting✂️`, m)
+if (!roof.pilih2) hisoka.sendText(roof.p2, `Silahkan pilih \n\nBatu🗿\nKertas📄\nGunting✂️`, m)
+roof.waktu_milih = setTimeout(() => {
+if (!roof.pilih && !roof.pilih2) hisoka.sendText(m.chat, `Kedua pemain tidak niat main,\nSuit dibatalkan`)
+else if (!roof.pilih || !roof.pilih2) {
+win = !roof.pilih ? roof.p2 : roof.p
+hisoka.sendTextWithMentions(m.chat, `@${(roof.pilih ? roof.p2 : roof.p).split`@`[0]} tidak memilih suit, game berakhir`, m)
+}
+delete this.suit[roof.id]
+return !0
+}, roof.timeout)
+}
+let jwb = m.sender == roof.p
+let jwb2 = m.sender == roof.p2
+let g = /gunting/i
+let b = /batu/i
+let k = /kertas/i
+let reg = /^(gunting|batu|kertas)/i
+if (jwb && reg.test(m.text) && !roof.pilih && !m.isGroup) {
+roof.pilih = reg.exec(m.text.toLowerCase())[0]
+roof.text = m.text
+m.reply(`Kamu telah memilih ${m.text} ${!roof.pilih2 ? `\n\nMenunggu lawan memilih` : ''}`)
+if (!roof.pilih2) hisoka.sendText(roof.p2, '_Lawan sudah memilih_\nSekarang giliran kamu', 0)
+}
+if (jwb2 && reg.test(m.text) && !roof.pilih2 && !m.isGroup) {
+roof.pilih2 = reg.exec(m.text.toLowerCase())[0]
+roof.text2 = m.text
+m.reply(`Kamu telah memilih ${m.text} ${!roof.pilih ? `\n\nMenunggu lawan memilih` : ''}`)
+if (!roof.pilih) hisoka.sendText(roof.p, '_Lawan sudah memilih_\nSekarang giliran kamu', 0)
+}
+let stage = roof.pilih
+let stage2 = roof.pilih2
+if (roof.pilih && roof.pilih2) {
+clearTimeout(roof.waktu_milih)
+if (b.test(stage) && g.test(stage2)) win = roof.p
+else if (b.test(stage) && k.test(stage2)) win = roof.p2
+else if (g.test(stage) && k.test(stage2)) win = roof.p
+else if (g.test(stage) && b.test(stage2)) win = roof.p2
+else if (k.test(stage) && b.test(stage2)) win = roof.p
+else if (k.test(stage) && g.test(stage2)) win = roof.p2
+else if (stage == stage2) tie = true
+hisoka.sendText(roof.asal, `_*Hasil Suit*_${tie ? '\nSERI' : ''}
+
+@${roof.p.split`@`[0]} (${roof.text}) ${tie ? '' : roof.p == win ? ` Menang \n` : ` Kalah \n`}
+@${roof.p2.split`@`[0]} (${roof.text2}) ${tie ? '' : roof.p2 == win ? ` Menang \n` : ` Kalah \n`}
+`.trim(), m, { mentions: [roof.p, roof.p2] })
+delete this.suit[roof.id]
+}
+}
+if (tebaklagu.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
+kuis = true
+jawaban = tebaklagu[m.sender.split('@')[0]]
+if (budy.toLowerCase() == jawaban) {
+await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lagu', buttonText: { displayText: 'Tebak Lagu' }, type: 1 }], `🎮 Tebak Lagu 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, 'KID BOT-MD', m)
+delete tebaklagu[m.sender.split('@')[0]]
+} else m.reply('*Jawaban Salah!*')
+}
+
+if (kuismath.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
+kuis = true
+jawaban = kuismath[m.sender.split('@')[0]]
+if (budy.toLowerCase() == jawaban) {
+await m.reply(`🎮 Kuis Matematika  🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? kirim ${prefix}math mode`)
+delete kuismath[m.sender.split('@')[0]]
+} else m.reply('*Jawaban Salah!*')
+}
+
+if (tebakgambar.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
+kuis = true
+jawaban = tebakgambar[m.sender.split('@')[0]]
+if (budy.toLowerCase() == jawaban) {
+await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak gambar', buttonText: { displayText: 'Tebak Gambar' }, type: 1 }], `🎮 Tebak Gambar 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, 'KID BOT-MD', m)
+delete tebakgambar[m.sender.split('@')[0]]
+} else m.reply('*Jawaban Salah!*')
+}
+
+if (tebakkata.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
+kuis = true
+jawaban = tebakkata[m.sender.split('@')[0]]
+if (budy.toLowerCase() == jawaban) {
+await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { displayText: 'Tebak Kata' }, type: 1 }], `🎮 Tebak Kata 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, 'KID BOT-MD', m)
+delete tebakkata[m.sender.split('@')[0]]
+} else m.reply('*Jawaban Salah!*')
+}
+
+if (caklontong.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
+kuis = true
+jawaban = caklontong[m.sender.split('@')[0]]
+deskripsi = caklontong_desk[m.sender.split('@')[0]]
+if (budy.toLowerCase() == jawaban) {
+await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lontong', buttonText: { displayText: 'Tebak Lontong' }, type: 1 }], `🎮 Cak Lontong 🎮\n\nJawaban Benar 🎉\n*${deskripsi}*\n\nIngin bermain lagi? tekan button dibawah`, 'KID BOT-MD', m)
+delete caklontong[m.sender.split('@')[0]]
+delete caklontong_desk[m.sender.split('@')[0]]
+} else m.reply('*Jawaban Salah!*')
+}
+
+if (tebakkalimat.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
+kuis = true
+jawaban = tebakkalimat[m.sender.split('@')[0]]
+if (budy.toLowerCase() == jawaban) {
+await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kalimat', buttonText: { displayText: 'Tebak Kalimat' }, type: 1 }], `🎮 Tebak Kalimat 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, 'KID BOT-MD', m)
+delete tebakkalimat[m.sender.split('@')[0]]
+} else m.reply('*Jawaban Salah!*')
+}
+
+if (tebaklirik.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
+kuis = true
+jawaban = tebaklirik[m.sender.split('@')[0]]
+if (budy.toLowerCase() == jawaban) {
+await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lirik', buttonText: { displayText: 'Tebak Lirik' }, type: 1 }], `🎮 Tebak Lirik 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, 'KID BOT-MD', m)
+delete tebaklirik[m.sender.split('@')[0]]
+} else m.reply('*Jawaban Salah!*')
+}
+
+if (tebaktebakan.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
+kuis = true
+jawaban = tebaktebakan[m.sender.split('@')[0]]
+if (budy.toLowerCase() == jawaban) {
+await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak tebakan', buttonText: { displayText: 'Tebak Tebakan' }, type: 1 }], `🎮 Tebak Tebakan 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, 'KID BOT-MD', m)
+delete tebaktebakan[m.sender.split('@')[0]]
+} else m.reply('*Jawaban Salah!*')
+}
+if (('family100'+m.chat in _family100) && isCmd) {
+kuis = true
+let room = _family100['family100'+m.chat]
+let teks = budy.toLowerCase().replace(/[^\w\s\-]+/, '')
+let isSurender = /^((me)?nyerah|surr?ender)$/i.test(m.text)
+if (!isSurender) {
+    let index = room.jawaban.findIndex(v => v.toLowerCase().replace(/[^\w\s\-]+/, '') === teks)
+    if (room.terjawab[index]) return !0
+    room.terjawab[index] = m.sender
+}
+let isWin = room.terjawab.length === room.terjawab.filter(v => v).length
+let caption = `
+Jawablah Pertanyaan Berikut :\n${room.soal}\n\n\nTerdapat ${room.jawaban.length} Jawaban ${room.jawaban.find(v => v.includes(' ')) ? `(beberapa Jawaban Terdapat Spasi)` : ''}
+${isWin ? `Semua Jawaban Terjawab` : isSurender ? 'Menyerah!' : ''}
+${Array.from(room.jawaban, (jawaban, index) => {
+return isSurender || room.terjawab[index] ? `(${index + 1}) ${jawaban} ${room.terjawab[index] ? '@' + room.terjawab[index].split('@')[0] : ''}`.trim() : false
+}).filter(v => v).join('\n')}
+${isSurender ? '' : `Perfect Player`}`.trim()
+hisoka.sendText(m.chat, caption, m, { contextInfo: { mentionedJid: parseMention(caption) }}).then(mes => { return _family100['family100'+m.chat].pesan = mesg }).catch(_ => _)
+if (isWin || isSurender) delete _family100['family100'+m.chat]
+}
 menunya = `
 ╭ *Hy Kak ${pushname} Saya Kid*
 
@@ -178,6 +426,7 @@ menunya = `
 *♟${prefix}megumin*
 *♟${prefix}shinobu*
 *♟${prefix}smug*
+*♟${prefix}hentai*
 
 《 *Group Menu* 》
 *♟${prefix}linkgroup*
@@ -196,6 +445,11 @@ menunya = `
 *♟${prefix}demote @user*
 *♟${prefix}hidetag <text>*
 *♟${prefix}getpp <reply gambar>*
+*♟${prefix}vote <text>*
+*♟${prefix}devote*
+*♟${prefix}upvote*
+*♟${prefix}cekvote*
+*♟${prefix}hapusvote*
 
 《 *Maker Menu* 》
 *♟${prefix}silverplaybutton <text>*
@@ -215,14 +469,33 @@ menunya = `
 *♟${prefix}ytmp4 <url>*
 *♟${prefix}ytmp3 <url>*
 
+《 *Anonymous Menu* 》
+*♟${prefix}anonymous*
+*♟${prefix}start*
+*♟${prefix}next*
+*♟${prefix}keluar*
+
 《 *Search Menu* 》
 *♟${prefix}ytsearch <query>*
+*♟${prefix}google <query>*
 *♟${prefix}pinterest <query>*
 *♟${prefix}wallpaper <query>*
 *♟${prefix}wikimedia <query>*
 *♟${prefix}manga <query>*
 *♟${prefix}anime <query>*
 *♟${prefix}webtoon <query>*
+*♟${prefix}joox <query>*
+
+《 *Game Menu* 》
+*♟${prefix}halah/hilih/huluh/heleh/holoh*
+*♟${prefix}jadian*
+*♟${prefix}jodohku*
+*♟${prefix}tictactoe*
+*♟${prefix}delttc*
+*♟${prefix}suitpvp <tag>*
+*♟${prefix}tebak <option>*
+*♟${prefix}slot*
+*♟${prefix}family100*
 
 《 *Random Menu* 》
 *♟${prefix}quotesanime*
@@ -231,6 +504,18 @@ menunya = `
 *♟${prefix}nickff*
 *♟${prefix}readmore*
 *♟${prefix}pantunpakboy*
+*♟${prefix}faktaunik*
+*♟${prefix}couple*
+*♟${prefix}cerpen*
+*♟${prefix}cersex*
+*♟${prefix}qrcode*
+
+《 *Islamic Menu* 》
+*♟${prefix}iqra*
+*♟${prefix}hadist*
+*♟${prefix}alquran*
+*♟${prefix}juzamma*
+*♟${prefix}tafsirsurah*
 
 《 *Primbon Menu* 》
 *♟${prefix}nomorhoki*
@@ -270,6 +555,11 @@ menunya = `
 *♟${prefix}tovideo*
 *♟${prefix}togif*
 *♟${prefix}tourl*
+*♟${prefix}tomp3*
+*♟${prefix}tovn*
+*♟${prefix}removebg*
+*♟${prefix}emojimix*
+*♟${prefix}styletext*
 
 《 *Database Menu* 》
 *♟${prefix}setcmd*
@@ -292,6 +582,9 @@ menunya = `
 *♟${prefix}block @user*
 *♟${prefix}unblock @user*
 *♟${prefix}sendsesi*
+*♟${prefix}setppbot*
+*♟${prefix}bc*
+*♟${prefix}bcgc*
 
 *Note : Bot Masih Dalam Tahap Pengembangan Jika Ada Yang Error Mohon Segera Hubungi Ke Owner*`
 
@@ -302,6 +595,13 @@ break
 case 'sc': case 'sourcecode': case 'script': {
 m.reply('Script : https://github.com/DikaArdnt/Hisoka-Morou\n\n Dont Forget Give Star')
 }
+break
+case 'hentai': {
+m.reply(mess.wait)
+axios.get(`https://hardianto.xyz/api/anime/random?nsfw=hentai&apikey=hardianto`)
+.then(({data}) => {
+sendFileFromUrl(m.chat, data.url, mess.succ, m)
+})}
 break
 case 'kiss': case 'yeet': case 'neko': case 'blush': case 'megumin': case 'shinobu': case 'smug': {
 m.reply(mess.wait)
@@ -316,6 +616,168 @@ axios.get(`https://api.waifu.pics/sfw/waifu`)
 .then(({data}) => {
 sendFileFromUrl(m.chat, data.url, mess.succ, m)
 })
+break
+case 'vote': {
+if (!m.isGroup) throw mess.group
+if (m.chat in vote) throw `_Masih ada vote di chat ini!_\n\n*${prefix}hapusvote* - untuk menghapus vote`
+if (!text) throw `Masukkan Alasan Melakukan Vote, Example: *${prefix + command} Owner Ganteng*`
+m.reply(`Vote dimulai!\n\n*${prefix}upvote* - untuk ya\n*${prefix}devote* - untuk tidak\n*${prefix}cekvote* - untuk mengecek vote\n*${prefix}hapusvote* - untuk menghapus vote`)
+vote[m.chat] = [q, [], []]
+await sleep(1000)
+upvote = vote[m.chat][1]
+devote = vote[m.chat][2]
+teks_vote = `*「 VOTE 」*
+
+*Alasan:* ${vote[m.chat][0]}
+
+┌〔 UPVOTE 〕
+│ 
+├ Total: ${vote[m.chat][1].length}
+│
+│ 
+└────
+
+┌〔 DEVOTE 〕
+│ 
+├ Total: ${vote[m.chat][2].length}
+│
+│ 
+└────
+
+*${prefix}hapusvote* - untuk menghapus vote`
+let buttonsVote = [
+  {buttonId: `${prefix}upvote`, buttonText: {displayText: '𝚄𝙿𝚅𝙾𝚃𝙴'}, type: 1},
+  {buttonId: `${prefix}devote`, buttonText: {displayText: '𝙳𝙴𝚅𝙾𝚃𝙴'}, type: 1}
+]
+
+let buttonMessageVote = {
+text: teks_vote,
+footer: 'KID BOT-MD',
+buttons: buttonsVote,
+headerType: 1
+}
+hisoka.sendMessage(m.chat, buttonMessageVote)
+}
+break
+case 'upvote': {
+if (!m.isGroup) throw mess.group
+if (!(m.chat in vote)) throw `_*tidak ada voting digrup ini!*_\n\n*${prefix}vote* - untuk memulai vote`
+isVote = vote[m.chat][1].concat(vote[m.chat][2])
+wasVote = isVote.includes(m.sender)
+if (wasVote) throw 'Kamu Sudah Vote'
+vote[m.chat][1].push(m.sender)
+menvote = vote[m.chat][1].concat(vote[m.chat][2])
+teks_vote = `*「 VOTE 」*
+
+*Alasan:* ${vote[m.chat][0]}
+
+┌〔 UPVOTE 〕
+│ 
+├ Total: ${vote[m.chat][1].length}
+${vote[m.chat][1].map((v, i) => `├ ${i + 1}. @${v.split`@`[0]}`).join('\n')}
+│ 
+└────
+
+┌〔 DEVOTE 〕
+│ 
+├ Total: ${vote[m.chat][2].length}
+${vote[m.chat][2].map((v, i) => `├ ${i + 1}. @${v.split`@`[0]}`).join('\n')}
+│ 
+└────
+
+*${prefix}hapusvote* - untuk menghapus vote`
+let buttonsUpvote = [
+  {buttonId: `${prefix}upvote`, buttonText: {displayText: '𝚄𝙿𝚅𝙾𝚃𝙴'}, type: 1},
+  {buttonId: `${prefix}devote`, buttonText: {displayText: '𝙳𝙴𝚅𝙾𝚃𝙴'}, type: 1}
+]
+
+let buttonMessageUpvote = {
+text: teks_vote,
+footer: 'KID BOT-MD',
+buttons: buttonsUpvote,
+headerType: 1,
+mentions: menvote
+ }
+hisoka.sendMessage(m.chat, buttonMessageUpvote)
+}
+ break
+case 'devote': {
+if (!m.isGroup) throw mess.group
+if (!(m.chat in vote)) throw `_*tidak ada voting digrup ini!*_\n\n*${prefix}vote* - untuk memulai vote`
+isVote = vote[m.chat][1].concat(vote[m.chat][2])
+wasVote = isVote.includes(m.sender)
+if (wasVote) throw 'Kamu Sudah Vote'
+vote[m.chat][2].push(m.sender)
+menvote = vote[m.chat][1].concat(vote[m.chat][2])
+teks_vote = `*「 VOTE 」*
+
+*Alasan:* ${vote[m.chat][0]}
+
+┌〔 UPVOTE 〕
+│ 
+├ Total: ${vote[m.chat][1].length}
+${vote[m.chat][1].map((v, i) => `├ ${i + 1}. @${v.split`@`[0]}`).join('\n')}
+│ 
+└────
+
+┌〔 DEVOTE 〕
+│ 
+├ Total: ${vote[m.chat][2].length}
+${vote[m.chat][2].map((v, i) => `├ ${i + 1}. @${v.split`@`[0]}`).join('\n')}
+│ 
+└────
+
+*${prefix}hapusvote* - untuk menghapus vote`
+let buttonsDevote = [
+  {buttonId: `${prefix}upvote`, buttonText: {displayText: '𝚄𝙿𝚅𝙾𝚃𝙴'}, type: 1},
+  {buttonId: `${prefix}devote`, buttonText: {displayText: '𝙳𝙴𝚅𝙾𝚃𝙴'}, type: 1}
+]
+
+let buttonMessageDevote = {
+text: teks_vote,
+footer: 'KID BOT-MD',
+buttons: buttonsDevote,
+headerType: 1,
+mentions: menvote
+}
+hisoka.sendMessage(m.chat, buttonMessageDevote)
+}
+break
+ 
+case 'cekvote':
+if (!m.isGroup) throw mess.group
+if (!(m.chat in vote)) throw `_*tidak ada voting digrup ini!*_\n\n*${prefix}vote* - untuk memulai vote`
+teks_vote = `*「 VOTE 」*
+
+*Alasan:* ${vote[m.chat][0]}
+
+┌〔 UPVOTE 〕
+│ 
+├ Total: ${upvote.length}
+${vote[m.chat][1].map((v, i) => `├ ${i + 1}. @${v.split`@`[0]}`).join('\n')}
+│ 
+└────
+
+┌〔 DEVOTE 〕
+│ 
+├ Total: ${devote.length}
+${vote[m.chat][2].map((v, i) => `├ ${i + 1}. @${v.split`@`[0]}`).join('\n')}
+│ 
+└────
+
+*${prefix}hapusvote* - untuk menghapus vote
+
+
+©${hisoka.user.id}
+`
+hisoka.sendTextWithMentions(m.chat, teks_vote, m)
+break
+case 'deletevote': case'delvote': case 'hapusvote': {
+if (!m.isGroup) throw mess.group
+if (!(m.chat in vote)) throw `_*tidak ada voting digrup ini!*_\n\n*${prefix}vote* - untuk memulai vote`
+delete vote[m.chat]
+m.reply('Berhasil Menghapus Sesi Vote Di Grup Ini')
+}
 break
 case 'setname': case 'setsubject': {
 if (!m.isGroup) throw mess.group
@@ -446,20 +908,6 @@ let online = [...Object.keys(store.presences[id]), hisoka.user.id]
 hisoka.sendText(m.chat, 'List Online:\n\n' + online.map(v => '⭔ @' + v.replace(/@.+/, '')).join`\n`, m, { mentions: online })
  }
  break
-case 'setprofile': case 'setpp': {
-if (!isCreator) throw mess.owner
-if (!quoted) throw 'Reply Image'
-if (/image/.test(mime)) throw `balas image dengan caption *${prefix + command}*`
-let media = await hisoka.downloadAndSaveMediaMessage(quoted)
-if (!m.isGroup && !isBotAdmins && !isGroupAdmins) {
-await hisoka.updateProfilePicture(m.chat, { url: media }).catch((err) => fs.unlinkSync(media))
-await fs.unlinkSync(media)
-} else if (!isCreator) {
-await hisoka.updateProfilePicture(hisoka.user.id, { url: media }).catch((err) => fs.unlinkSync(media))
-await fs.unlinkSync(media)
-}
-}
-break
 case 'delete': case 'del': case 'd':{
 if (!isCreator) throw mess.owner 
 if (!m.quoted) throw false
@@ -548,6 +996,116 @@ fs.writeFileSync('./src/cmdmedia.json', JSON.stringify(cmdmedia))
 m.reply('Done!')
 }
 break
+case 'setppbot': {
+if (!isCreator) throw mess.owner
+if (!quoted) throw `Kirim/Reply Image Dengan Caption ${prefix + command}`
+if (!/image/.test(mime)) throw `Kirim/Reply Image Dengan Caption ${prefix + command}`
+if (/webp/.test(mime)) throw `Kirim/Reply Image Dengan Caption ${prefix + command}`
+let media = await hisoka.downloadAndSaveMediaMessage(quoted)
+await hisoka.updateProfilePicture(botNumber, { url: media }).catch((err) => fs.unlinkSync(media))
+m.reply(mess.success)
+}
+break
+case 'bcgc': case 'bcgroup': {
+if (!isCreator) throw mess.owner
+if (!text) throw `Text mana?\n\nExample : ${prefix + command} fatih-san`
+let getGroups = await hisoka.groupFetchAllParticipating()
+let groups = Object.entries(getGroups).slice(0).map(entry => entry[1])
+let anu = groups.map(v => v.id)
+m.reply(`Mengirim Broadcast Ke ${anu.length} Group Chat, Waktu Selesai ${anu.length * 1.5} detik`)
+for (let i of anu) {
+await sleep(1500)
+let btn = [{
+urlButton: {
+displayText: 'My Group',
+url: 'https://chat.whatsapp.com/GDZOBuMkFSCKw6mzDUDoPd'
+}
+},
+{
+urlButton: {
+displayText: 'My Youtube',
+url: 'https://youtube.com/channel/UCUzeU3gvoQPV1joakMUOTtg'
+}
+},
+{
+quickReplyButton: {
+displayText: 'Status Bot',
+id: `${prefix}ping`
+}
+},
+{
+quickReplyButton: {
+displayText: 'Owner',
+id: `${prefix}owner`,
+}
+},
+{
+quickReplyButton: {
+displayText: 'Script',
+id: `${prefix}sc`
+}
+}]
+  fatihgans = fs.readFileSync('./lib/hisoka.jpg')
+  let txt = `「 Broadcast Bot 」\n\n${text}`
+  hisoka.send5ButImg(i, txt, 'KID BOT-MD', fatihgans, btn)
+}
+m.reply(`Sukses Mengirim Broadcast Ke ${anu.length} Group`)
+}
+break
+case 'video':
+if (!q) throw(mess.wrongFormat)
+if (!isUrl(q)) throw (mess.wrongFormat)
+hisoka.sendMessage(from, { video: { url: `${q}` }}, { quoted: m })
+break
+case 'audio':
+if (!q) throw(mess.wrongFormat)
+if (!isUrl(q)) throw (mess.wrongFormat)
+hisoka.sendMessage(from, { audio: { url: `${q}` }}, { quoted: m })
+break
+case 'bc': case 'broadcast': case 'bcall': {
+if (!isCreator) throw mess.owner
+if (!text) throw `Text mana?\n\nExample : ${prefix + command} fatih-san`
+let anu = await store.chats.all().map(v => v.id)
+m.reply(`Mengirim Broadcast Ke ${anu.length} Chat\nWaktu Selesai ${anu.length * 1.5} detik`)
+for (let yoi of anu) {
+await sleep(1500)
+let btn = [{
+urlButton: {
+displayText: 'My Group',
+url: 'https://chat.whatsapp.com/GDZOBuMkFSCKw6mzDUDoPd'
+}
+},
+{
+urlButton: {
+displayText: 'My Youtube',
+url: 'https://youtube.com/channel/UCUzeU3gvoQPV1joakMUOTtg'
+}
+},
+{
+quickReplyButton: {
+displayText: 'Status Bot',
+id: `${prefix}ping`
+}
+},
+{
+quickReplyButton: {
+displayText: 'Owner',
+id: `${prefix}owner`,
+}
+},
+{
+quickReplyButton: {
+displayText: 'Script',
+id: `${prefix}sc`
+}
+}]
+  fatihgans = fs.readFileSync('./lib/hisoka.jpg')
+  let txt = `「 Broadcast Bot 」\n\n${text}`
+  hisoka.send5ButImg(yoi, txt, 'KID BOT-MD', fatihgans, btn)
+}
+m.reply('Sukses Broadcast')
+}
+break
 case 'sticker': case 's': case 'stickergif': case 'sgif': {
 if (!quoted) throw `Balas Video/Image Dengan Caption ${prefix + command}`
 m.reply(mess.wait)
@@ -611,6 +1169,79 @@ let anu = await UploadFileUgu(media)
 m.reply(util.format(anu))
 }
 await fs.unlinkSync(media)
+}
+break
+case 'imagenobg': case 'removebg': case 'remove-bg': {
+if (!quoted) throw `Kirim/Reply Image Dengan Caption ${prefix + command}`
+if (!/image/.test(mime)) throw `Kirim/Reply Image Dengan Caption ${prefix + command}`
+if (/webp/.test(mime)) throw `Kirim/Reply Image Dengan Caption ${prefix + command}`
+let remobg = require('remove.bg')
+let apirnobg = ['q61faXzzR5zNU6cvcrwtUkRU','S258diZhcuFJooAtHTaPEn4T','5LjfCVAp4vVNYiTjq9mXJWHF','aT7ibfUsGSwFyjaPZ9eoJc61','BY63t7Vx2tS68YZFY6AJ4HHF','5Gdq1sSWSeyZzPMHqz7ENfi8','86h6d6u4AXrst4BVMD9dzdGZ','xp8pSDavAgfE5XScqXo9UKHF','dWbCoCb3TacCP93imNEcPxcL']
+let apinobg = apirnobg[Math.floor(Math.random() * apirnobg.length)]
+hmm = await './dataB/remobg-'+getRandom('')
+localFile = await hisoka.downloadAndSaveMediaMessage(quoted, hmm)
+outputFile = await './dataB/hremo-'+getRandom('.png')
+m.reply(mess.wait)
+remobg.removeBackgroundFromImageFile({
+  path: localFile,
+  apiKey: apinobg,
+  size: "regular",
+  type: "auto",
+  scale: "100%",
+  outputFile 
+}).then(async result => {
+hisoka.sendMessage(m.chat, {image: fs.readFileSync(outputFile), caption: mess.success}, { quoted : m })
+await fs.unlinkSync(localFile)
+await fs.unlinkSync(outputFile)
+})
+}
+break
+case 'tomp3': {
+if (/document/.test(mime)) throw `Kirim/Reply Video/Audio Yang Ingin Dijadikan MP3 Dengan Caption ${prefix + command}`
+if (!/video/.test(mime) && !/audio/.test(mime)) throw `Kirim/Reply Video/Audio Yang Ingin Dijadikan MP3 Dengan Caption ${prefix + command}`
+if (!quoted) throw `Kirim/Reply Video/Audio Yang Ingin Dijadikan MP3 Dengan Caption ${prefix + command}`
+m.reply(mess.wait)
+let media = await quoted.download()
+let { toAudio } = require('./lib/converter')
+let audio = await toAudio(media, 'mp4')
+hisoka.sendMessage(m.chat, {document: audio, mimetype: 'audio/mpeg', fileName: `Convert By ${'KID BOT-MD'}.mp3`}, { quoted : m })
+}
+break
+case 'tovn': case 'toptt': {
+if (!/video/.test(mime) && !/audio/.test(mime)) throw `Reply Video/Audio Yang Ingin Dijadikan VN Dengan Caption ${prefix + command}`
+if (!quoted) throw `Reply Video/Audio Yang Ingin Dijadikan VN Dengan Caption ${prefix + command}`
+m.reply(mess.wait)
+let media = await quoted.download()
+let { toPTT } = require('./lib/converter')
+let audio = await toPTT(media, 'mp4')
+hisoka.sendMessage(m.chat, {audio: audio, mimetype:'audio/mpeg', ptt:true }, {quoted:m})
+}
+break
+case 'emojimix': {
+if (!text) throw `Example : ${prefix + command} 😅+🤔`
+let [emoji1, emoji2] = text.split`+`
+let anu = await fetchJson(`https://tenor.googleapis.com/v2/featured?key=AIzaSyAyimkuYQYF_FXVALexPuGQctUWRURdCYQ&contentfilter=high&media_filter=png_transparent&component=proactive&collection=emoji_kitchen_v5&q=${encodeURIComponent(emoji1)}_${encodeURIComponent(emoji2)}`)
+for (let res of anu.results) {
+let encmedia = await hisoka.sendImageAsSticker(m.chat, res.url, m, { packname: global.packname, author: global.author, categories: res.tags })
+await fs.unlinkSync(encmedia)
+}
+}
+break
+case 'style': case 'styletext': {
+async function stylizeText(text) {
+let res = await fetch('http://qaz.wtf/u/convert.cgi?text=' + encodeURIComponent(text))
+let html = await res.text()
+let dom = new JSDOM(html)
+let table = dom.window.document.querySelector('table').children[0].children
+let obj = {}
+for (let tr of table) {
+let name = tr.querySelector('.aname').innerHTML
+let content = tr.children[1].textContent.replace(/^\n/, '').replace(/\n$/, '')
+obj[name + (obj[name] ? ' Reversed' : '')] = content
+}
+return obj
+}
+m.reply(Object.entries(await stylizeText(text ? text : m.quoted && m.quoted.text ? m.quoted.text : m.text)).map(([name, value]) => `*${name}*\n${value}`).join`\n\n`)
 }
 break
 case 'pinterest': {
@@ -698,6 +1329,32 @@ hisoka.sendMessage(x, `${command.split(prefix)[1]} Error: \n\n` + err)
 m.reply(mess.error)
 })}
 break
+case 'yts': case 'ytsearch': {
+if (!text) throw `Example : ${prefix + command} story wa anime`
+let yts = require("yt-search")
+let search = await yts(text)
+let teks = 'YouTube Search\n\n Result From '+text+'\n\n'
+let no = 1
+for (let i of search.all) {
+teks += `⭔ No : ${no++}\n⭔ Type : ${i.type}\n⭔ Video ID : ${i.videoId}\n⭔ Title : ${i.title}\n⭔ Views : ${i.views}\n⭔ Duration : ${i.timestamp}\n⭔ Upload At : ${i.ago}\n⭔ Author : ${i.author.name}\n⭔ Url : ${i.url}\n\n─────────────────\n\n`
+}
+hisoka.sendMessage(m.chat, { image: { url: search.all[0].thumbnail },  caption: teks }, { quoted: m })
+}
+break
+case 'google': {
+if (!text) throw `Example : ${prefix + command} fatih arridho`
+let google = require('google-it')
+google({'query': text}).then(res => {
+let teks = `Google Search From : ${text}\n\n`
+for (let g of res) {
+teks += `⭔ *Title* : ${g.title}\n`
+teks += `⭔ *Description* : ${g.snippet}\n`
+teks += `⭔ *Link* : ${g.link}\n\n────────────────────────\n\n`
+} 
+m.reply(teks)
+})
+}
+break
 case 'quotesanime': case 'quoteanime': {
 anu = await quotesAnime()
 result = anu[Math.floor(Math.random() * anu.length)]
@@ -735,6 +1392,36 @@ break
 case 'pantunpakboy': {
 anu = await fetchJson(`https://api.zeks.me/api/pantun?apikey=apivinz&=`)
 m.reply(anu.result.pantun)
+}
+break
+case 'faktaunik': {
+anu = await fetchJson(`https://docs-jojo.herokuapp.com/api/fakta-unik`)
+m.reply(`tahukah kamu?
+anu.result`)
+}
+break
+case 'cersex': {
+anu = await fetchJson(`https://docs-jojo.herokuapp.com/api/cersex`)
+m.reply(`*Judul* : ${anu.result.judul}\n*Cerita* : ${anu.result.cersex}`)
+}
+break
+case 'cerpen': {
+anu = await fetchJson(`https://docs-jojo.herokuapp.com/api/cerpen`)
+m.reply(`*Judul* : ${anu.result.judul}\n*Cerita* : ${anu.result.cerpen}`)
+}
+break
+case 'couple': case 'ppcp':{
+m.reply(mess.wait)
+let anu = await fetchJson('https://raw.githubusercontent.com/iamriz7/kopel_/main/kopel.json')
+let random = anu[Math.floor(Math.random() * anu.length)]
+hisoka.sendMessage(m.chat, { image: { url: random.male }, caption: `Couple Male` }, { quoted: m })
+hisoka.sendMessage(m.chat, { image: { url: random.female }, caption: `Couple Female` }, { quoted: m })
+}
+break
+case 'qrcode': case 'qr': {
+if (args.length < 2) return reply(`Kirim perintah ${command} Text\nContoh : ${command} bot whatsapp`)
+m.reply(mess.wait)
+hisoka.sendMessage(from, {caption: `*QR CODE*`, image: {url: `https://docs-jojo.herokuapp.com/api/qrcode?text=${q}`}}, {quoted: m})
 }
 break
 case 'readmore': case 'more': {
@@ -1090,7 +1777,7 @@ case 'mp4': case 'ytmp4': {
 if (!q) throw (mess.wrongFormat)
 if (!isUrl(q)) throw (mess.wrongFormat)
 if (!q.includes('youtu.be') && !q.includes('youtube.com')) throw m.reply(mess.wrongFormat)
-await m.reply(mess.wait)
+m.reply(mess.wait)
 xfar.Youtube(text).then(async (data) => {
 let txt = `*----「 YOUTUBE VIDEO 」----*\n\n`
 txt += `*Quality :* *${data.medias[1].quality}*\n`
@@ -1109,7 +1796,7 @@ case 'mp3': case 'ytmp3': {
 if (!q) throw (mess.wrongFormat)
 if (!isUrl(q)) throw (mess.wrongFormat)
 if (!q.includes('youtu.be') && !q.includes('youtube.com')) throw m.reply(mess.wrongFormat)
-await m.reply(mess.wait)
+m.reply(mess.wait)
 xfar.Youtube(q).then(async (data) => {
 let txt = `*----「 YOUTUBE AUDIO 」----*\n\n`
 txt += `*Quality :* *${data.medias[7].quality}*\n`
@@ -1124,57 +1811,37 @@ hisoka.sendMessage(m.chat, {audio: {url: data.medias[7].url}})
 m.reply(mess.error)
 })}
 break
-case 'yts': case 'ytsearch': {
-if (!q) throw(mess.wrongFormat)
-await m.reply(mess.wait)
-srch = `${q}`
-var aramas = await yts(srch);
-aramat = aramas.all 
-var tbuff = await getBuffer(aramat[0].image)
-var ytresult = '';
-ytresult += '*----「 YOUTUBE SEARCH 」----*\n\n'
-aramas.all.map((video) => {
-ytresult += '*Title:* ' + video.title + '\n'
-ytresult += '*Link:* ' + video.url + '\n'
-ytresult += '*Durasi:* ' + video.timestamp + '\n'
-ytresult += '*Views:* ' + video.views + '\n'
-ytresult += '*Upload:* ' + video.ago + '\n\n'
-})};
-hisoka.sendMessage(from, {image: tbuff, caption: ytresult}, {quoted:m})
-break
 case 'setcmd': {
 if (!m.quoted) throw 'Reply Pesan!'
 if (!m.quoted.fileSha256) throw 'SHA256 Hash Missing'
 if (!text) throw `Untuk Command Apa?`
 let hash = m.quoted.fileSha256.toString('base64')
-if (cmdmedia[hash] && cmdmedia[hash].locked) throw 'You have no permission to change this sticker command'
-cmdmedia[hash] = {
+if (global.db.sticker[hash] && global.db.sticker[hash].locked) throw 'You have no permission to change this sticker command'
+global.db.sticker[hash] = {
 text,
 mentionedJid: m.mentionedJid,
 creator: m.sender,
 at: + new Date,
 locked: false,
 }
-fs.writeFileSync('./dataB/cmdmedia.json', JSON.stringify(cmdmedia))
-m.reply(mess.succ)
+m.reply(`Done!`)
 }
 break
 case 'delcmd': {
 let hash = m.quoted.fileSha256.toString('base64')
 if (!hash) throw `Tidak ada hash`
-if (cmdmedia[hash] && cmdmedia[hash].locked) throw 'You have no permission to delete this sticker command'              
-delete cmdmedia[hash]
-fs.writeFileSync('./dataB/cmdmedia.json', JSON.stringify(cmdmedia))
-m.reply(mess.succ)
+if (global.db.sticker[hash] && global.db.sticker[hash].locked) throw 'You have no permission to delete this sticker command'              
+delete global.db.sticker[hash]
+m.reply(`Done!`)
 }
 break
 case 'listcmd': {
 let teks = `
 *List Hash*
 Info: *bold* hash is Locked
-${Object.entries(cmdmedia).map(([key, value], index) => `${index + 1}. ${value.locked ? `*${key}*` : key} : ${value.text}`).join('\n')}
+${Object.entries(global.db.sticker).map(([key, value], index) => `${index + 1}. ${value.locked ? `*${key}*` : key} : ${value.text}`).join('\n')}
 `.trim()
-hisoka.sendText(m.chat, teks, m, { mentions: Object.values(cmdmedia).map(x => x.mentionedJid).reduce((a,b) => [...a, ...b], []) })
+hisoka.sendText(m.chat, teks, m, { mentions: Object.values(global.db.sticker).map(x => x.mentionedJid).reduce((a,b) => [...a, ...b], []) })
 }
 break
 case 'q': case 'quoted': {
@@ -1212,6 +1879,513 @@ anu = await getBuffer(`https://api.zeks.me/api/nulis?apikey=apivinz&text=${q}`)
 hisoka.sendMessage(from, {image: anu, caption: mess.succ}, {quoted:m})
 }
 break
+case 'iqra': {
+oh = `Example : ${prefix + command} 3\n\nIQRA Yang tersedia : 1,2,3,4,5,6`
+if (!text) throw oh
+yy = await getBuffer(`https://islamic-api-indonesia.herokuapp.com/api/data/pdf/iqra${text}`)
+hisoka.sendMessage(m.chat, {document: yy, mimetype: 'application/pdf', fileName: `iqra${text}.pdf`}, {quoted:m}).catch ((err) => m.reply(oh))
+}
+break
+case 'juzamma': {
+if (args[0] === 'pdf') {
+m.reply(mess.wait)
+hisoka.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.pdf'}, mimetype: 'application/pdf', fileName: 'juz-amma-arab-latin-indonesia.pdf'}, {quoted:m})
+} else if (args[0] === 'docx') {
+m.reply(mess.wait)
+hisoka.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.docx'}, mimetype: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', fileName: 'juz-amma-arab-latin-indonesia.docx'}, {quoted:m})
+} else if (args[0] === 'pptx') {
+m.reply(mess.wait)
+hisoka.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.pptx'}, mimetype: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', fileName: 'juz-amma-arab-latin-indonesia.pptx'}, {quoted:m})
+} else if (args[0] === 'xlsx') {
+m.reply(mess.wait)
+hisoka.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.xlsx'}, mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', fileName: 'juz-amma-arab-latin-indonesia.xlsx'}, {quoted:m})
+} else {
+m.reply(`Mau format apa ? Example : ${prefix + command} pdf
+
+Format yang tersedia : pdf, docx, pptx, xlsx`)
+}
+}
+break
+case 'hadis': case 'hadist': {
+if (!args[0]) throw `Contoh:
+${prefix + command} bukhari 1
+${prefix + command} abu-daud 1
+
+Pilihan tersedia:
+abu-daud
+1 - 4590
+ahmad
+1 - 26363
+bukhari
+1 - 7008
+darimi
+1 - 3367
+ibu-majah
+1 - 4331
+nasai
+1 - 5662
+malik
+1 - 1594
+muslim
+1 - 5362`
+if (!args[1]) throw `Hadis yang ke berapa?\n\ncontoh:\n${prefix + command} muslim 1`
+try {
+let res = await fetchJson(`https://islamic-api-indonesia.herokuapp.com/api/data/json/hadith/${args[0]}`)
+let { number, arab, id } = res.find(v => v.number == args[1])
+m.reply(`No. ${number}
+
+${arab}
+
+${id}`)
+} catch (e) {
+m.reply(`Hadis tidak ditemukan !`)
+}
+}
+break
+case 'alquran': {
+if (!args[0]) throw `Contoh penggunaan:\n${prefix + command} 1 2\n\nmaka hasilnya adalah surah Al-Fatihah ayat 2 beserta audionya, dan ayatnya 1 aja`
+if (!args[1]) throw `Contoh penggunaan:\n${prefix + command} 1 2\n\nmaka hasilnya adalah surah Al-Fatihah ayat 2 beserta audionya, dan ayatnya 1 aja`
+let res = await fetchJson(`https://islamic-api-indonesia.herokuapp.com/api/data/quran?surah=${args[0]}&ayat=${args[1]}`)
+let txt = `*Arab* : ${res.result.data.text.arab}
+*English* : ${res.result.data.translation.en}
+*Indonesia* : ${res.result.data.translation.id}
+
+( Q.S ${res.result.data.surah.name.transliteration.id} : ${res.result.data.number.inSurah} )`
+m.reply(txt)
+hisoka.sendMessage(m.chat, {audio: { url: res.result.data.audio.primary }, mimetype: 'audio/mpeg'}, { quoted : m })
+}
+break
+case 'tafsirsurah': {
+if (!args[0]) throw `Contoh penggunaan:\n${prefix + command} 1 2\n\nmaka hasilnya adalah tafsir surah Al-Fatihah ayat 2`
+if (!args[1]) throw `Contoh penggunaan:\n${prefix + command} 1 2\n\nmaka hasilnya adalah tafsir surah Al-Fatihah ayat 2`
+let res = await fetchJson(`https://islamic-api-indonesia.herokuapp.com/api/data/quran?surah=${args[0]}&ayat=${args[1]}`)
+let txt = `ã€Œ *Tafsir Surah*  ã€
+
+*Pendek* : ${res.result.data.tafsir.id.short}
+
+*Panjang* : ${res.result.data.tafsir.id.long}
+
+( Q.S ${res.result.data.surah.name.transliteration.id} : ${res.result.data.number.inSurah} )`
+m.reply(txt)
+}
+break
+case 'anonymous': {
+if (m.isGroup) return m.reply('Fitur Tidak Dapat Digunakan Untuk Group!')
+this.anonymous = this.anonymous ? this.anonymous : {}
+let buttons = [
+{ buttonId: 'start', buttonText: { displayText: 'Start' }, type: 1 }
+]
+hisoka.sendButtonText(m.chat, buttons, `\`\`\`Hi ${await hisoka.getName(m.sender)} Welcome To Anonymous Chat\n\nKlik Button Dibawah Ini Untuk Mencari Partner\`\`\``, 'KID BOT-MD', m)
+}
+break
+case 'keluar': case 'leave': {
+if (m.isGroup) return m.reply('Fitur Tidak Dapat Digunakan Untuk Group!')
+this.anonymous = this.anonymous ? this.anonymous : {}
+let room = Object.values(this.anonymous).find(room => room.check(m.sender))
+if (!room) {
+let buttons = [
+{ buttonId: 'start', buttonText: { displayText: 'Start' }, type: 1 }
+]
+await hisoka.sendButtonText(m.chat, buttons, `\`\`\`Kamu Sedang Tidak Berada Di Sesi Anonymous, Tekan Button Untuk Mencari Partner \`\`\``)
+throw false
+}
+m.reply('Ok')
+let other = room.other(m.sender)
+if (other) await hisoka.sendText(other, `\`\`\`Partner Telah Meninggalkan Sesi Anonymous\`\`\``, m)
+delete this.anonymous[room.id]
+if (command === 'leave') break
+}
+case 'mulai': case 'start': {
+if (m.isGroup) return m.reply('Fitur Tidak Dapat Digunakan Untuk Group!')
+this.anonymous = this.anonymous ? this.anonymous : {}
+if (Object.values(this.anonymous).find(room => room.check(m.sender))) {
+let buttons = [
+{ buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
+]
+await hisoka.sendButtonText(m.chat, buttons, `\`\`\`Kamu Masih Berada Di dalam Sesi Anonymous, Tekan Button Dibawah Ini Untuk Menghentikan Sesi Anonymous Anda\`\`\``, 'KID BOT-MD', m)
+throw false
+}
+let room = Object.values(this.anonymous).find(room => room.state === 'WAITING' && !room.check(m.sender))
+if (room) {
+let buttons = [
+{ buttonId: 'next', buttonText: { displayText: 'Skip' }, type: 1 },
+{ buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
+]
+await hisoka.sendButtonText(room.a, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, 'KID BOT-MD', m)
+room.b = m.sender
+room.state = 'CHATTING'
+await hisoka.sendButtonText(room.b, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, 'KID BOT-MD', m)
+} else {
+let id = + new Date
+this.anonymous[id] = {
+id,
+a: m.sender,
+b: '',
+state: 'WAITING',
+check: function (who = '') {
+return [this.a, this.b].includes(who)
+},
+other: function (who = '') {
+return who === this.a ? this.b : who === this.b ? this.a : ''
+},
+}
+let buttons = [
+{ buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
+]
+await hisoka.sendButtonText(m.chat, buttons, `\`\`\`Mohon Tunggu Sedang Mencari Partner\`\`\``, 'KID BOT-MD', m)
+}
+break
+}
+case 'next': case 'lanjut': {
+if (m.isGroup) return m.reply('Fitur Tidak Dapat Digunakan Untuk Group!')
+this.anonymous = this.anonymous ? this.anonymous : {}
+let romeo = Object.values(this.anonymous).find(room => room.check(m.sender))
+if (!romeo) {
+let buttons = [
+{ buttonId: 'start', buttonText: { displayText: 'Start' }, type: 1 }
+]
+await hisoka.sendButtonText(m.chat, buttons, `\`\`\`Kamu Sedang Tidak Berada Di Sesi Anonymous, Tekan Button Untuk Mencari Partner\`\`\``)
+throw false
+}
+let other = romeo.other(m.sender)
+if (other) await hisoka.sendText(other, `\`\`\`Partner Telah Meninggalkan Sesi Anonymous\`\`\``, m)
+delete this.anonymous[romeo.id]
+let room = Object.values(this.anonymous).find(room => room.state === 'WAITING' && !room.check(m.sender))
+if (room) {
+let buttons = [
+{ buttonId: 'next', buttonText: { displayText: 'Skip' }, type: 1 },
+{ buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
+]
+await hisoka.sendButtonText(room.a, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, 'KID BOT-MD', m)
+room.b = m.sender
+room.state = 'CHATTING'
+await hisoka.sendButtonText(room.b, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, 'KID BOT-MD', m)
+} else {
+let id = + new Date
+this.anonymous[id] = {
+id,
+a: m.sender,
+b: '',
+state: 'WAITING',
+check: function (who = '') {
+return [this.a, this.b].includes(who)
+},
+other: function (who = '') {
+return who === this.a ? this.b : who === this.b ? this.a : ''
+},
+}
+let buttons = [
+{ buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
+]
+await hisoka.sendButtonText(m.chat, buttons, `\`\`\`Mohon Tunggu Sedang Mencari Partner\`\`\``, 'KID BOT-MD', m)
+}
+break
+}
+case 'halah': case 'hilih': case 'huluh': case 'heleh': case 'holoh':
+if (!m.quoted && !text) throw `Kirim/reply text dengan caption ${prefix + command}`
+ter = command[1].toLowerCase()
+tex = m.quoted ? m.quoted.text ? m.quoted.text : q ? q : m.text : q ? q : m.text
+m.reply(tex.replace(/[aiueo]/g, ter).replace(/[AIUEO]/g, ter.toUpperCase()))
+break
+case 'jadian': {
+if (!m.isGroup) throw mess.group
+let member = participants.map(u => u.id)
+let orang = member[Math.floor(Math.random() * member.length)]
+let jodoh = member[Math.floor(Math.random() * member.length)]
+let jawab = `Ciee yang JadianðŸ’– Jangan lupa pajak jadiannyaðŸ¤
+
+@${orang.split('@')[0]} â¤ï¸ @${jodoh.split('@')[0]}`
+let menst = [orang, jodoh]
+let buttons = [
+{ buttonId: 'jadian', buttonText: { displayText: 'Jodohku' }, type: 1 }
+]
+await hisoka.sendButtonText(m.chat, buttons, jawab, 'KID BOT-MD', m, {mentions: menst})
+}
+break
+case 'jodohku': {
+if (!m.isGroup) throw mess.group
+let member = participants.map(u => u.id)
+let me = m.sender
+let jodoh = member[Math.floor(Math.random() * member.length)]
+let jawab = `ðŸ‘«Jodoh mu adalah
+
+@${me.split('@')[0]} â¤ï¸ @${jodoh.split('@')[0]}`
+let ments = [me, jodoh]
+let buttons = [
+{ buttonId: 'jodohku', buttonText: { displayText: 'Jodohku' }, type: 1 }
+]
+await hisoka.sendButtonText(m.chat, buttons, jawab, 'KID BOT-MD', m, {mentions: ments})
+}
+break
+case 'ttc': case 'ttt': case 'tictactoe': {
+let TicTacToe = require("./lib/tictactoe")
+this.game = this.game ? this.game : {}
+if (Object.values(this.game).find(room => room.id.startsWith('tictactoe') && [room.game.playerX, room.game.playerO].includes(m.sender))) throw 'Kamu masih didalam game'
+let room = Object.values(this.game).find(room => room.state === 'WAITING' && (text ? room.name === text : true))
+if (room) {
+m.reply('Partner ditemukan!')
+room.o = m.chat
+room.game.playerO = m.sender
+room.state = 'PLAYING'
+let arr = room.game.render().map(v => {
+return {
+X: '❌',
+O: '⭕',
+1: '1️⃣',
+2: '2️⃣',
+3: '3️⃣',
+4: '4️⃣',
+5: '5️⃣',
+6: '6️⃣',
+7: '7️⃣',
+8: '8️⃣',
+9: '9️⃣',
+}[v]
+})
+let str = `Room ID: ${room.id}
+
+${arr.slice(0, 3).join('')}
+${arr.slice(3, 6).join('')}
+${arr.slice(6).join('')}
+
+Menunggu @${room.game.currentTurn.split('@')[0]}
+
+Ketik *nyerah* untuk menyerah dan mengakui kekalahan`
+if (room.x !== room.o) await hisoka.sendText(room.x, str, m, { mentions: parseMention(str) } )
+await hisoka.sendText(room.o, str, m, { mentions: parseMention(str) } )
+} else {
+room = {
+id: 'tictactoe-' + (+new Date),
+x: m.chat,
+o: '',
+game: new TicTacToe(m.sender, 'o'),
+state: 'WAITING'
+}
+if (text) room.name = text
+m.reply('Menunggu partner' + (text ? ` mengetik command dibawah ini ${prefix}${command} ${text}` : ''))
+this.game[room.id] = room
+}
+}
+break
+case 'delttc': case 'delttt': {
+this.game = this.game ? this.game : {}
+try {
+if (this.game) {
+delete this.game
+hisoka.sendText(m.chat, `Berhasil delete session TicTacToe`, m)
+} else if (!this.game) {
+m.reply(`Session TicTacToe🎮 tidak ada`)
+} else throw '?'
+} catch (e) {
+m.reply('rusak')
+}
+}
+break
+case 'suitpvp': case 'suit': {
+this.suit = this.suit ? this.suit : {}
+let poin = 10
+let poin_lose = 10
+let timeout = 60000
+if (Object.values(this.suit).find(roof => roof.id.startsWith('suit') && [roof.p, roof.p2].includes(m.sender))) m.reply(`Selesaikan suit mu yang sebelumnya`)
+if (m.mentionedJid[0] === m.sender) return m.reply(`Tidak bisa bermain dengan diri sendiri !`)
+if (!m.mentionedJid[0]) return m.reply(`_Siapa yang ingin kamu tantang?_\nTag orangnya..\n\nContoh : ${prefix}suit @${owner[1]}`, m.chat, { mentions: [owner[1] + '@s.whatsapp.net'] })
+if (Object.values(this.suit).find(roof => roof.id.startsWith('suit') && [roof.p, roof.p2].includes(m.mentionedJid[0]))) throw `Orang yang kamu tantang sedang bermain suit bersama orang lain :(`
+let id = 'suit_' + new Date() * 1
+let caption = `_*SUIT PvP*_
+
+@${m.sender.split`@`[0]} menantang @${m.mentionedJid[0].split`@`[0]} untuk bermain suit
+
+Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
+this.suit[id] = {
+chat: await hisoka.sendText(m.chat, caption, m, { mentions: parseMention(caption) }),
+id: id,
+p: m.sender,
+p2: m.mentionedJid[0],
+status: 'wait',
+waktu: setTimeout(() => {
+if (this.suit[id]) hisoka.sendText(m.chat, `_Waktu suit habis_`, m)
+delete this.suit[id]
+}, 60000), poin, poin_lose, timeout
+}
+}
+break
+case 'tebak': {
+if (!text) throw `Example : ${prefix + command} lagu\n\nOption : \n1. lagu\n2. gambar\n3. kata\n4. kalimat\n5. lirik\n6.lontong`
+if (args[0] === "lagu") {
+if (tebaklagu.hasOwnProperty(m.sender.split('@')[0])) throw "Masih Ada Sesi Yang Belum Diselesaikan!"
+let anu = await fetchJson('https://fatiharridho.github.io/tebaklagu.json')
+let result = anu[Math.floor(Math.random() * anu.length)]
+let msg = await hisoka.sendMessage(m.chat, { audio: { url: result.link_song }, mimetype: 'audio/mpeg' }, { quoted: m })
+hisoka.sendText(m.chat, `Lagu Tersebut Adalah Lagu dari?\n\nArtist : ${result.artist}\nWaktu : 60s`, msg).then(() => {
+tebaklagu[m.sender.split('@')[0]] = result.jawaban.toLowerCase()
+})
+await sleep(60000)
+if (tebaklagu.hasOwnProperty(m.sender.split('@')[0])) {
+console.log("Jawaban: " + result.jawaban)
+hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lagu', buttonText: { displayText: 'Tebak Lagu' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebaklagu[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, 'KID BOT-MD', m)
+delete tebaklagu[m.sender.split('@')[0]]
+}
+} else if (args[0] === 'gambar') {
+if (tebakgambar.hasOwnProperty(m.sender.split('@')[0])) throw "Masih Ada Sesi Yang Belum Diselesaikan!"
+let anu = await fetchJson('https://raw.githubusercontent.com/BochilTeam/database/master/games/tebakgambar.json')
+let result = anu[Math.floor(Math.random() * anu.length)]
+hisoka.sendImage(m.chat, result.img, `Silahkan Jawab Soal Di Atas Ini\n\nDeskripsi : ${result.deskripsi}\nWaktu : 60s`, m).then(() => {
+tebakgambar[m.sender.split('@')[0]] = result.jawaban.toLowerCase()
+})
+await sleep(60000)
+if (tebakgambar.hasOwnProperty(m.sender.split('@')[0])) {
+console.log("Jawaban: " + result.jawaban)
+hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak gambar', buttonText: { displayText: 'Tebak Gambar' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebakgambar[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, 'KID BOT-MD', m)
+delete tebakgambar[m.sender.split('@')[0]]
+}
+} else if (args[0] === 'kata') {
+if (tebakkata.hasOwnProperty(m.sender.split('@')[0])) throw "Masih Ada Sesi Yang Belum Diselesaikan!"
+let anu = await fetchJson('https://raw.githubusercontent.com/BochilTeam/database/master/games/tebakkata.json')
+let result = anu[Math.floor(Math.random() * anu.length)]
+hisoka.sendText(m.chat, `Silahkan Jawab Pertanyaan Berikut\n\n${result.soal}\nWaktu : 60s`, m).then(() => {
+tebakkata[m.sender.split('@')[0]] = result.jawaban.toLowerCase()
+})
+await sleep(60000)
+if (tebakkata.hasOwnProperty(m.sender.split('@')[0])) {
+console.log("Jawaban: " + result.jawaban)
+hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { displayText: 'Tebak Kata' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebakkata[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, 'KID BOT-MD', m)
+delete tebakkata[m.sender.split('@')[0]]
+}
+} else if (args[0] === 'kalimat') {
+if (tebakkalimat.hasOwnProperty(m.sender.split('@')[0])) throw "Masih Ada Sesi Yang Belum Diselesaikan!"
+let anu = await fetchJson('https://raw.githubusercontent.com/BochilTeam/database/master/games/tebakkalimat.json')
+let result = anu[Math.floor(Math.random() * anu.length)]
+hisoka.sendText(m.chat, `Silahkan Jawab Pertanyaan Berikut\n\n${result.soal}\nWaktu : 60s`, m).then(() => {
+tebakkalimat[m.sender.split('@')[0]] = result.jawaban.toLowerCase()
+})
+await sleep(60000)
+if (tebakkalimat.hasOwnProperty(m.sender.split('@')[0])) {
+console.log("Jawaban: " + result.jawaban)
+hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kalimat', buttonText: { displayText: 'Tebak Kalimat' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebakkalimat[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, 'KID BOT-MD', m)
+delete tebakkalimat[m.sender.split('@')[0]]
+}
+} else if (args[0] === 'lirik') {
+if (tebaklirik.hasOwnProperty(m.sender.split('@')[0])) throw "Masih Ada Sesi Yang Belum Diselesaikan!"
+let anu = await fetchJson('https://raw.githubusercontent.com/BochilTeam/database/master/games/tebaklirik.json')
+let result = anu[Math.floor(Math.random() * anu.length)]
+hisoka.sendText(m.chat, `Ini Adalah Lirik Dari Lagu? : *${result.soal}*?\nWaktu : 60s`, m).then(() => {
+tebaklirik[m.sender.split('@')[0]] = result.jawaban.toLowerCase()
+})
+await sleep(60000)
+if (tebaklirik.hasOwnProperty(m.sender.split('@')[0])) {
+console.log("Jawaban: " + result.jawaban)
+hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lirik', buttonText: { displayText: 'Tebak Lirik' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebaklirik[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, 'KID BOT-MD', m)
+delete tebaklirik[m.sender.split('@')[0]]
+}
+} else if (args[0] === 'lontong') {
+if (caklontong.hasOwnProperty(m.sender.split('@')[0])) throw "Masih Ada Sesi Yang Belum Diselesaikan!"
+let anu = await fetchJson('https://raw.githubusercontent.com/BochilTeam/database/master/games/caklontong.json')
+let result = anu[Math.floor(Math.random() * anu.length)]
+hisoka.sendText(m.chat, `*Jawablah Pertanyaan Berikut :*\n${result.soal}*\nWaktu : 60s`, m).then(() => {
+caklontong[m.sender.split('@')[0]] = result.jawaban.toLowerCase()
+caklontong_desk[m.sender.split('@')[0]] = result.deskripsi
+})
+await sleep(60000)
+if (caklontong.hasOwnProperty(m.sender.split('@')[0])) {
+console.log("Jawaban: " + result.jawaban)
+hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lontong', buttonText: { displayText: 'Tebak Lontong' }, type: 1 }], `Waktu Habis\nJawaban:  ${caklontong[m.sender.split('@')[0]]}\nDeskripsi : ${caklontong_desk[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, 'KID BOT-MD', m)
+delete caklontong[m.sender.split('@')[0]]
+delete caklontong_desk[m.sender.split('@')[0]]
+}
+}
+}
+break
+case 'slot': {
+const one = [
+'🍊 : 🍒 : 🍐',
+'🍒 : 🔔 : 🍊',
+'🍇 : 🍇 : 🍐',
+'🍊 : 🍋 : 🔔', //Arasya
+'🔔 : 🍒 : 🍐',
+'🔔 : 🍒 : 🍊',
+'🍊 : 🍋 : 🔔',        
+'🍐 : 🍒 : 🍋',
+'🍐 : 🍒 : 🍐',
+'🍊 : 🍒 : 🍒',
+'🔔 : 🔔 : 🍇',
+'🍌 : 🍌 : 🔔',
+'🥑 : 🥑 : 🥑 Win👑',
+'🍐 : 🔔 : 🔔',
+'🍊 : 🍋 : 🍒',
+'🌶️ : 🌶️ : 🌶️ Win👑',
+'🍋 : 🍋 : 🍋 Win👑',
+'🔔 : 🔔 : 🍇',
+'🔔 : 🍇 : 🍇', 
+'🔔 : 🍐 : 🔔',
+'🍌 : 🍌 : 🍌 Win👑'
+]
+const two = [
+'🍊 : 🍒 : 🍐',
+'🍒 : 🔔 : 🍊',
+'🍇 : 🍇 : 🍐',
+'🍊 : 🍋 : 🔔',
+'🔔 : 🍒 : 🍐',
+'🔔 : 🍒 : 🍊',
+'🍊 : 🍋 : 🔔',        
+'🍐 : 🍒 : 🍋',
+'🍐 : 🍒 : 🍐',
+'🍊 : 🍒 : 🍒',
+'🔔 : 🔔 : 🍇',
+'🍌 : 🍌 : 🔔',
+'🍐 : 🔔 : 🔔',
+'🍊 : 🍋 : 🍒',
+'🔔 : 🔔 : 🍇',
+'🔔 : 🍇 : 🍇', 
+'🔔 : 🍐 : 🔔',
+]
+ const three = [
+'🍊 : 🍒 : 🍐',
+'🍒 : 🔔 : 🍊',
+'🍇 : 🍇 : 🍐',
+'🍊 : 🍋 : 🔔',
+'🔔 : 🍒 : 🍐',
+'🔔 : 🍒 : 🍊',
+'🍊 : 🍋 : 🔔',        
+'🍐 : 🍒 : 🍋',
+'🍐 : 🍒 : 🍐',
+'🍊 : 🍒 : 🍒',
+'🔔 : 🔔 : 🍇',
+'🍌 : 🍌 : 🔔',
+'🍐 : 🔔 : 🔔',
+'🍊 : 🍋 : 🍒',
+'🔔 : 🔔 : 🍇',
+'🔔 : 🍇 : 🍇', 
+'🔔 : 🍐 : 🔔',
+]
+const selot = one[Math.floor(Math.random() * pepekk.length)]
+const kalahnya = two[Math.floor(Math.random() * kalah.length)]
+const kalahnya2 = three[Math.floor(Math.random() * kalah2.length)]
+var slotnya = `*[  🎰 | SLOTS ]*
+
+${kalahnya}
+${selot}
+${kalahnya2}
+
+*Jika Kamu Mendapatkan Item Yang Sama, Kamu Menang!*`
+m.reply(`${slotnya}`)}
+break
+case 'family100': {
+if ('family100'+m.chat in _family100) {
+m.reply('Masih Ada Sesi Yang Belum Diselesaikan!')
+throw false
+}
+let anu = await fetchJson('https://raw.githubusercontent.com/BochilTeam/database/master/games/family100.json')
+let random = anu[Math.floor(Math.random() * anu.length)]
+let hasil = `*Jawablah Pertanyaan Berikut :*\n${random.soal}\n\nTerdapat *${random.jawaban.length}* Jawaban ${random.jawaban.find(v => v.includes(' ')) ? `(beberapa Jawaban Terdapat Spasi)` : ''}`.trim()
+_family100['family100'+m.chat] = {
+id: 'family100'+m.chat,
+pesan: await hisoka.sendText(m.chat, hasil, m),
+...random,
+terjawab: Array.from(random.jawaban, () => false),
+hadiah: 6,
+}
+}
+break
 default:
 if (isVO){
 if (m.mtype == 'viewOnceMessage' === true ){
@@ -1227,7 +2401,7 @@ function Return(sul) {
 sat = JSON.stringify(sul, null, 2)
 bang = util.format(sat)
 if (sat == undefined) {
-    bang = util.format(sul)
+bang = util.format(sul)
 }
 return m.reply(bang)
 }
@@ -1248,6 +2422,25 @@ await m.reply(evaled)
 m = String(err)
 await m.reply(m)
 }
+}
+
+if (m.chat.endsWith('@s.whatsapp.net') && isCmd) {
+this.anonymous = this.anonymous ? this.anonymous : {}
+let room = Object.values(this.anonymous).find(room => [room.a, room.b].includes(m.sender) && room.state === 'CHATTING')
+if (room) {
+if (/^.*(next|leave|start)/.test(m.text)) return
+if (['.next', '.leave', '.stop', '.start', 'Cari Partner', 'Keluar', 'Lanjut', 'Stop'].includes(m.text)) return
+let other = [room.a, room.b].find(user => user !== m.sender)
+m.copyNForward(other, true, m.quoted && m.quoted.fromMe ? {
+contextInfo: {
+...m.msg.contextInfo,
+forwardingScore: 0,
+isForwarded: true,
+participant: other
+}
+} : {})
+}
+return !0
 }
 
 if (budy.startsWith('$')) {
