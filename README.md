@@ -17,7 +17,7 @@ This is WhatsApp multi device, working with [`@adiwajshing/baileys`](https://git
 
 ```bash
 git clone https://github.com/KunzxD404/kid-md
-cd kid
+cd kid-md
 npm install
 ```
 
@@ -29,8 +29,8 @@ apt update && apt upgrade
 apt install git -y
 apt install nodejs -y
 apt install ffmpeg -y
-git clone https://github.com/DikaArdnt/Hisoka-Morou
-cd Hisoka-Morou
+git clone https://github.com/KunzxD404/Kid-md
+cd kid-md
 npm install
 ```
 
@@ -49,6 +49,10 @@ $ node .
 ## ❗ Warning
 WhatsApp bot is still in the development stage, so there are a few bugs
 WhatsApp Connection (BETA, not working perfectly)
+
+## Contact Me
+* [`Whatsapp`](https://wa.me/6287778886786)
+* [`Instagram`](https://instagram.com/iam_kunzx)
 
 ## Thanks To
 * [`@adiwajshing/baileys`](https://github.com/adiwajshing/baileys/)
