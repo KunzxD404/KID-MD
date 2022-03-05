@@ -71,58 +71,58 @@ console.log('Koneksi Terhubung...', update)
 
 hisoka.ev.on('creds.update', saveState)
 hisoka.decodeJid = (jid) => {
-        if (!jid) return jid
-        if (/:\d+@/gi.test(jid)) {
-            let decode = jidDecode(jid) || {}
-            return decode.user && decode.server && decode.user + '@' + decode.server || jid
-        } else return jid
-    }
-    
+if (!jid) return jid
+if (/:\d+@/gi.test(jid)) {
+let decode = jidDecode(jid) || {}
+return decode.user && decode.server && decode.user + '@' + decode.server || jid
+} else return jid
+}
+
 hisoka.getName = (jid, withoutContact  = false) => {
-        id = hisoka.decodeJid(jid)
-        withoutContact = hisoka.withoutContact || withoutContact 
-        let v
-        if (id.endsWith("@g.us")) return new Promise(async (resolve) => {
-            v = store.contacts[id] || {}
-            if (!(v.name || v.subject)) v = hisoka.groupMetadata(id) || {}
-            resolve(v.name || v.subject || PhoneNumber('+' + id.replace('@s.whatsapp.net', '')).getNumber('international'))
-        })
-        else v = id === '0@s.whatsapp.net' ? {
-            id,
-            name: 'WhatsApp'
-        } : id === hisoka.decodeJid(hisoka.user.id) ?
-            hisoka.user :
-            (store.contacts[id] || {})
-            return (withoutContact ? '' : v.name) || v.subject || v.verifiedName || PhoneNumber('+' + jid.replace('@s.whatsapp.net', '')).getNumber('international')
-    }
-    
+id = hisoka.decodeJid(jid)
+withoutContact = hisoka.withoutContact || withoutContact 
+let v
+if (id.endsWith("@g.us")) return new Promise(async (resolve) => {
+v = store.contacts[id] || {}
+if (!(v.name || v.subject)) v = hisoka.groupMetadata(id) || {}
+resolve(v.name || v.subject || PhoneNumber('+' + id.replace('@s.whatsapp.net', '')).getNumber('international'))
+})
+else v = id === '0@s.whatsapp.net' ? {
+id,
+name: 'WhatsApp'
+} : id === hisoka.decodeJid(hisoka.user.id) ?
+hisoka.user :
+(store.contacts[id] || {})
+return (withoutContact ? '' : v.name) || v.subject || v.verifiedName || PhoneNumber('+' + jid.replace('@s.whatsapp.net', '')).getNumber('international')
+}
+
 // Add Other
 
 /** Send Button 5 Image
-     *
-     * @param {*} jid
-     * @param {*} text
-     * @param {*} footer
-     * @param {*} image
-     * @param [*] button
-     * @param {*} options
-     * @returns
-     */
-    hisoka.send5ButImg = async (jid , text = '' , footer = '', img, but = [], options = {}) =>{
-        let message = await prepareWAMessageMedia({ image: img }, { upload: hisoka.waUploadToServer })
-        var template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-        templateMessage: {
-        hydratedTemplate: {
-        imageMessage: message.imageMessage,
-               "hydratedContentText": text,
-               "hydratedFooterText": footer,
-               "hydratedButtons": but
-            } 
-            }
-            }), options)
-            hisoka.relayMessage(jid, template.message, { messageId: template.key.id })
-    }
-    
+ *
+ * @param {*} jid
+ * @param {*} text
+ * @param {*} footer
+ * @param {*} image
+ * @param [*] button
+ * @param {*} options
+ * @returns
+ */
+hisoka.send5ButImg = async (jid , text = '' , footer = '', img, but = [], options = {}) =>{
+let message = await prepareWAMessageMedia({ image: img }, { upload: hisoka.waUploadToServer })
+var template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+templateMessage: {
+hydratedTemplate: {
+imageMessage: message.imageMessage,
+   "hydratedContentText": text,
+   "hydratedFooterText": footer,
+   "hydratedButtons": but
+} 
+}
+}), options)
+hisoka.relayMessage(jid, template.message, { messageId: template.key.id })
+}
+
 /**
  * 
  * @param {*} jid 
@@ -133,25 +133,25 @@ hisoka.getName = (jid, withoutContact  = false) => {
  */
 hisoka.sendText = (jid, text, quoted = '', options) => hisoka.sendMessage(jid, { text: text, ...options }, { quoted })
 /**
-     * 
-     * @param {*} jid 
-     * @param {*} buttons 
-     * @param {*} caption 
-     * @param {*} footer 
-     * @param {*} quoted 
-     * @param {*} options 
-     */
-    hisoka.sendButtonText = (jid, buttons = [], text, footer, quoted = '', options = {}) => {
-        let buttonMessage = {
-            text,
-            footer,
-            buttons,
-            headerType: 2,
-            ...options
-        }
-        hisoka.sendMessage(jid, buttonMessage, { quoted, ...options })
-    }
-    
+ * 
+ * @param {*} jid 
+ * @param {*} buttons 
+ * @param {*} caption 
+ * @param {*} footer 
+ * @param {*} quoted 
+ * @param {*} options 
+ */
+hisoka.sendButtonText = (jid, buttons = [], text, footer, quoted = '', options = {}) => {
+let buttonMessage = {
+text,
+footer,
+buttons,
+headerType: 2,
+...options
+}
+hisoka.sendMessage(jid, buttonMessage, { quoted, ...options })
+}
+
 /**
  * 
  * @param {*} jid 
