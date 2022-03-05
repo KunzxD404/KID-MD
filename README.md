@@ -6,7 +6,7 @@ WhatsApp Bot Multi Device
 </p>
 <h1 align="center">Kaito-Kid</h1>
 
-This is WhatsApp multi device, working with [`@adiwajshing/baileys-md`](https://github.com/adiwajshing/baileys/tree/multi-device)
+This is WhatsApp multi device, working with [`@adiwajshing/baileys`](https://github.com/adiwajshing/baileys/)
 
 ## UNTUK PENGGUNA WINDOWS/RDP
 
