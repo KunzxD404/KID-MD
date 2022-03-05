@@ -44,7 +44,7 @@ WhatsApp bot is still in the development stage, so there are a few bugs
 WhatsApp Connection (BETA, not working perfectly)
 
 ## Thanks To
-* [`@adiwajshing/baileys-md`](https://github.com/adiwajshing/baileys/tree/multi-device)
+* [`@adiwajshing/baileys`](https://github.com/adiwajshing/baileys/)
 * [`Nurutomo`](https://github.com/Nurutomo)
 * [`Mhankbarbar`](https://github.com/MhankBarBar)
 * [`DikaArdnt/Hisoka-Morou`](https://github.com/DikaArdnt/Hisoka-Morou)
