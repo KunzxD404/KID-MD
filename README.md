@@ -6,7 +6,7 @@ WhatsApp Bot Multi Device
 </p>
 <h1 align="center">Kaito-Kid</h1>
 
-This is WhatsApp multi device, working with [`@adiwajshing/baileys-md`](https://github.com/adiwajshing/baileys/tree/multi-device)
+This is WhatsApp multi device, working with [`@adiwajshing/baileys`](https://github.com/adiwajshing/baileys/)
 
 ## UNTUK PENGGUNA WINDOWS/RDP
 
@@ -39,14 +39,23 @@ npm install
 $ node .
 ```
 
+## IF ERROR INSTALL MODULE FOR TERMUX
+
+```bash
+pkg install yarn
+yarn
+```
+
 ## ❗ Warning
 WhatsApp bot is still in the development stage, so there are a few bugs
 WhatsApp Connection (BETA, not working perfectly)
 
 ## Thanks To
-* [`@adiwajshing/baileys-md`](https://github.com/adiwajshing/baileys/tree/multi-device)
+* [`@adiwajshing/baileys`](https://github.com/adiwajshing/baileys)
 * [`Nurutomo`](https://github.com/Nurutomo)
 * [`Mhankbarbar`](https://github.com/MhankBarBar)
 * [`DikaArdnt/Hisoka-Morou`](https://github.com/DikaArdnt/Hisoka-Morou)
+* [`Febriansyah`](https://github.com/febzofc)
+* [`Dan Penyedia Apikeyweb(ada di case tqtq)`](https://github.com/kunzxd404)
 
 License: [MIT](https://en.wikipedia.org/wiki/MIT_License)
