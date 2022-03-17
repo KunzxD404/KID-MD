@@ -12,7 +12,13 @@
   "multi-device",
   "js-whatsapp",
   "whatsapp",
-  "kid-bot"
+  "kid-bot",
+  "nodejs",
+  "javascript",
+  "baileys-md",
+  "termux",
+  "rpg",
+  "bot"
    ],
   "author": "Dika Ardnt.",
   "license": "MIT",
