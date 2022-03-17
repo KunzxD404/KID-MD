@@ -6,7 +6,7 @@ WhatsApp Bot Multi Device
 </p>
 <h1 align="center">Kaito-Kid</h1>
 
-This is WhatsApp multi device, working with [`@adiwajshing/baileys`](https://github.com/adiwajshing/baileys/)
+This is WhatsApp multi device, working with [`@adiwajshing/baileys-md`](https://github.com/adiwajshing/baileys/tree/multi-device)
 
 ## UNTUK PENGGUNA WINDOWS/RDP
 
@@ -17,7 +17,7 @@ This is WhatsApp multi device, working with [`@adiwajshing/baileys`](https://git
 
 ```bash
 git clone https://github.com/KunzxD404/kid-md
-cd kid-md
+cd kid
 npm install
 ```
 
@@ -29,16 +29,9 @@ apt update && apt upgrade
 apt install git -y
 apt install nodejs -y
 apt install ffmpeg -y
-git clone https://github.com/KunzxD404/Kid-md
-cd kid-md
+git clone https://github.com/DikaArdnt/Hisoka-Morou
+cd Hisoka-Morou
 npm install
-```
-
-## IF ERROR INSTALL MODULE FOR TERMUX
-
-```bash
-pkg install yarn
-yarn
 ```
 
 ## Installing
@@ -50,12 +43,8 @@ $ node .
 WhatsApp bot is still in the development stage, so there are a few bugs
 WhatsApp Connection (BETA, not working perfectly)
 
-## Contact Me
-* [`Whatsapp`](https://wa.me/6287778886786)
-* [`Instagram`](https://instagram.com/iam_kunzx)
-
 ## Thanks To
-* [`@adiwajshing/baileys`](https://github.com/adiwajshing/baileys/)
+* [`@adiwajshing/baileys-md`](https://github.com/adiwajshing/baileys/tree/multi-device)
 * [`Nurutomo`](https://github.com/Nurutomo)
 * [`Mhankbarbar`](https://github.com/MhankBarBar)
 * [`DikaArdnt/Hisoka-Morou`](https://github.com/DikaArdnt/Hisoka-Morou)
