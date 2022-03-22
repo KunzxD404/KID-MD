@@ -1,5 +1,5 @@
 require('./config')
-const { default: makeWASocket, BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, downloadContentFromMessage, downloadHistory, proto, getMessage, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia, areJidsSameUser } = require('@adiwajshing/baileys')
+const { default: makeWASocket, prepareMessageFromContent, BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, downloadContentFromMessage, downloadHistory, proto, getMessage, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia, areJidsSameUser } = require('@adiwajshing/baileys')
 const fs = require('fs')
 const util = require('util')
 const chalk = require('chalk')
@@ -16,40 +16,30 @@ const speed = require('performance-now')
 const { performance } = require('perf_hooks')
 const { Primbon } = require('scrape-primbon')
 const primbon = new Primbon()
-const { wallpaper, wikimedia, quotesAnime, jadwalbola, jadwaltv, jadwalsholat } = require('./lib/scraper')
+const { jadwalbola, jadwaltv, jadwalsholat } = require('./lib/scraper')
 const { UploadFileUgu, webp2mp4File, TelegraPh } = require('./lib/uploader')
 const { smsg, getGroupAdmins, formatp, tanggal, formatDate, getTime, isUrl, sleep, clockString, runtime, fetchJson, getBuffer, jsonformat, delay, format, logic, generateProfilePicture, parseMention, getRandom } = require('./lib/myfunc')
 const { addBalance, kurangBalance, getBalance} = require("./lib/balance");
-const { addEmas, sellEmas, getEmas, addDiamond, sellDiamond, getDiamond, addBesi, sellBesi, getBesi, addKayu, sellKayu, getKayu, addDaun, sellDaun, getDaun, addSampah, sellSampah, getSampah, addMonyet, sellMonyet, getMonyet, addGorilla, sellGorilla, getGorilla, addAnjing, sellAnjing, getAnjing, addHarimau, addMacan, addKuda, addZebra, addRusa, addKerbau, addSapi, addBabi, addGaruda, addDomba, addKelelawar, sellHarimau, sellMacan, sellKuda, sellZebra, sellRusa, sellKerbau, sellSapi, sellBabi, sellGaruda, sellDomba, sellKelelawar, checkPetualangUser, addInventory, addIkan, sellIkan, getIkan } = require('./lib/rpgfunction')
+const { addEmas, sellEmas, getEmas, addDm, sellDm, getDm, addBesi, sellBesi, getBesi, addKayu, sellKayu, getKayu, addDaun, sellDaun, getDaun, addSampah, sellSampah, getSampah, addMonyet, sellMonyet, getMonyet, addGorilla, sellGorilla, getGorilla, addAnjing, sellAnjing, getAnjing, addHarimau, addMacan, addKuda, addZebra, addRusa, addKerbau, addSapi, addBabi, addGaruda, addDomba, addKelelawar, sellHarimau, sellMacan, sellKuda, sellZebra, sellRusa, sellKerbau, sellSapi, sellBabi, sellGaruda, sellDomba, sellKelelawar, checkPetualangUser, addInventori, addIkan, sellIkan, getIkan } = require('./lib/rpgfunction')
 const { addLevelingId, addLevelingLevel, addLevelingXp, getLevelingId, getLevelingLevel, getLevelingXp } = require("./lib/lvlfunction");
-
-global.db = JSON.parse(fs.readFileSync('./dataB/database.json'))
-if (global.db) global.db = {
-sticker: {},
-database: {},
-game: {},
-others: {},
-users: {},
-...(global.db || {})
-}
-let tebaklagu = db.game.tebaklagu = []
-let tebakbendera = db.game.tebakbendera = []
-let _family100 = db.game.family100 = []
-let kuismath = db.game.math = []
-let tebakgambar = db.game.tebakgambar = []
-let tebakkata = db.game.tebakkata = []
-let caklontong = db.game.lontong = []
-let caklontong_desk = db.game.lontong_desk = []
-let tebakkalimat = db.game.kalimat = []
-let tebaklirik = db.game.lirik = []
-let tebaktebakan = db.game.tebakan = []
-let vote = db.others.vote = []
-let balance = JSON.parse(fs.readFileSync('./dataB/balance.json'));
-let _RPG = JSON.parse(fs.readFileSync('./dataB/inventori.json'))
-let _level = JSON.parse(fs.readFileSync('./dataB/leveluser.json'))
-let _petualang = JSON.parse(fs.readFileSync('./dataB/inventori.json'))
-let vo = JSON.parse(fs.readFileSync('./dataB/viewonce.json'))
-let daftaruser = JSON.parse(fs.readFileSync('./dataB/User.json'))
+const tebaklagu = db.data.game.tebaklagu = []
+const tebakbendera = db.data.game.tebakbendera = []
+const _family100 = db.data.game.family100 = []
+const kuismath = db.data.game.math = []
+const tebakgambar = db.data.game.tebakgambar = []
+const tebakkata = db.data.game.tebakkata = []
+const caklontong = db.data.game.lontong = []
+const caklontong_desk = db.data.game.lontong_desk = []
+const tebakkalimat = db.data.game.kalimat = []
+const tebaklirik = db.data.game.lirik = []
+const tebaktebakan = db.data.game.tebakan = []
+const vote = db.data.others.vote = []
+const balance = JSON.parse(fs.readFileSync('./dataB/balance.json'));
+const _RPG = JSON.parse(fs.readFileSync('./dataB/inventori.json'))
+const _level = JSON.parse(fs.readFileSync('./dataB/leveluser.json'))
+const _petualang = JSON.parse(fs.readFileSync('./dataB/inventori.json'))
+const vo = JSON.parse(fs.readFileSync('./dataB/viewonce.json'))
+const daftaruser = JSON.parse(fs.readFileSync('./dataB/User.json'))
 
 module.exports = hisoka = async (hisoka, m, chatUpdate) => {
 try {
@@ -134,13 +124,13 @@ irq: 0
 try {
 let isNumber = x => typeof x === 'number' && !isNaN(x)
 let limitUser = isPremium ? global.limitawal.premium : global.limitawal.free
-let user = global.db.users[m.sender]
-if (typeof user !== 'object') global.db.users[m.sender] = {}
+let user = global.db.data.users[m.sender]
+if (typeof user !== 'object') global.db.data.users[m.sender] = {}
 if (user) {
 if (!isNumber(user.afkTime)) user.afkTime = -1
 if (!('afkReason' in user)) user.afkReason = ''
 if (!isNumber(user.limit)) user.limit = limitUser
-} else global.db.users[m.sender] = {
+} else global.db.data.users[m.sender] = {
 afkTime: -1,
 afkReason: '',
 limit: limitUser,
@@ -151,28 +141,31 @@ console.error(err)
 if (!hisoka.public) {
 if (!m.key.fromMe) return
 }
+setInterval(() => {
+fs.writeFileSync('./dataB/database.json', JSON.stringify(global.db, null, 2))
+}, 60 * 1000)
 if (isCmd && !isUser) {
 daftaruser.push(m.sender)
 fs.writeFileSync('./dataB/user.json', JSON.stringify(daftaruser, null, 2))
 }
 if (m.message) {
 hisoka.sendReadReceipt(m.chat, m.sender, [m.key.id])
-if (!isPremium && global.db.users[m.sender].limit < 1) return m.reply(mess.endLimit) // respon ketika limit habis
-db.users[m.sender].limit -= 1 // -1 limit
+if (!isPremium && global.db.data.users[m.sender].limit < 1) return m.reply(mess.endLimit) // respon ketika limit habis
 console.log(chalk.black(chalk.bgWhite('[ PESAN ]')), chalk.black(chalk.bgGreen(new Date)), chalk.black(chalk.bgBlue(budy || m.mtype)) + '\n' + chalk.magenta('=> Dari'), chalk.green(pushname), chalk.yellow(m.sender) + '\n' + chalk.blueBright('=> Di'), chalk.green(m.isGroup ? pushname : 'Private Chat', m.chat))
+db.data.users[m.sender].limit -= 1 // -1 limit
 }
 let cron = require('node-cron')
 cron.schedule('00 12 * * *', () => {
-let user = Object.keys(global.db.users)
+let user = Object.keys(global.db.data.users)
 let limitUser = isPremium ? global.limitawal.premium : global.limitawal.free
-for (let jid of user) global.db.users[jid].limit = limitUser
+for (let jid of user) global.db.data.users[jid].limit = limitUser
 console.log('Reseted Limit')
 }, {
 scheduled: true,
 timezone: "Asia/Jakarta"
 })
-if (isMedia && m.msg.fileSha256 && (m.msg.fileSha256.toString('base64') in global.db.sticker)) {
-let hash = global.db.sticker[m.msg.fileSha256.toString('base64')]
+if (isMedia && m.msg.fileSha256 && (m.msg.fileSha256.toString('base64') in global.db.data.sticker)) {
+let hash = global.db.data.sticker[m.msg.fileSha256.toString('base64')]
 let { text, mentionedJid } = hash
 let messages = await generateWAMessage(m.chat, { text: text, mentions: mentionedJid }, {
 userJid: hisoka.user.id,
@@ -200,7 +193,7 @@ const buttonsDefault = [
 { quickReplyButton: { displayText: `🔍 YT-Search`, id: `${prefix}yts ${q}` } },
 ]
 var teks = `*Judul :* *${data.title}*\n*Size mp4 :* *${data.size}*\n*Size mp3 :* *${data.size_mp3}*`
-hisoka.sendMessage(from, { caption: teks, location: { jpegThumbnail: await getBuffer(data.thumb) }, templateButtons: buttonsDefault, footer: `${namebot}`, mentions: [m.sender] })
+hisoka.sendMessage(from, { caption: teks, location: { jpegThumbnail: await getBuffer(data.thumb) }, templateButtons: buttonsDefault, footer: namebot, mentions: [m.sender] })
 }).catch((e) => {
 hisoka.sendMessage(from, { text: mess.error.api }, { quoted: m })
 owner.map( i => hisoka.sendMessage(from, { text: `Send Play Error : ${e}` }))
@@ -250,6 +243,32 @@ var buatpesan = await generateWAMessageFromContent(from, {
 }, {})
 hisoka.relayMessage(id, buatpesan.message, { messageId: buatpesan.key.id })
 }
+butcbb = [
+{
+"urlButton": {
+"displayText": "Chat Me",
+"url": "wa.me/6287778886786"
+}
+},
+{
+"urlButton": {
+"displayText": "My Group",
+"url": "https://chat.whatsapp.com/GDZOBuMkFSCKw6mzDUDoPd"
+}
+},
+{
+"quickReplyButton": {
+"displayText": "Menu Bot",
+"id": `${prefix}menu`
+}
+},
+{
+"quickReplyButton": {
+"displayText": "Script",
+"id": `${prefix}sc`
+}
+}
+]
 this.game = this.game ? this.game : {}
 let room = Object.values(this.game).find(room => room.id && room.game && room.state && room.id.startsWith('tictactoe') && [room.game.playerX, room.game.playerO].includes(m.sender) && room.state == 'PLAYING')
 if (room) {
@@ -388,7 +407,7 @@ if (tebaklagu.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
 kuis = true
 jawaban = tebaklagu[m.sender.split('@')[0]]
 if (budy.toLowerCase() == jawaban) {
-await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lagu', buttonText: { displayText: 'Tebak Lagu' }, type: 1 }], `🎮 Tebak Lagu 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, `${namebot}`, m)
+await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lagu', buttonText: { displayText: 'Tebak Lagu' }, type: 1 }], `🎮 Tebak Lagu 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, namebot, m)
 delete tebaklagu[m.sender.split('@')[0]]
 } else m.reply('*Jawaban Salah!*')
 }
@@ -404,7 +423,7 @@ if (tebakgambar.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
 kuis = true
 jawaban = tebakgambar[m.sender.split('@')[0]]
 if (budy.toLowerCase() == jawaban) {
-await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak gambar', buttonText: { displayText: 'Tebak Gambar' }, type: 1 }], `🎮 Tebak Gambar 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, `${namebot}`, m)
+await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak gambar', buttonText: { displayText: 'Tebak Gambar' }, type: 1 }], `🎮 Tebak Gambar 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, namebot, m)
 delete tebakgambar[m.sender.split('@')[0]]
 } else m.reply('*Jawaban Salah!*')
 }
@@ -412,7 +431,7 @@ if (tebakbendera.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
 kuis = true
 jawaban = tebakbendera[m.sender.split('@')[0]]
 if (budy.toLowerCase() == jawaban) {
-await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak bendera', buttonText: { displayText: 'Tebak Bendera' }, type: 1 }], `🎮 Tebak Bendera 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, `${namebot}`, m)
+await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak bendera', buttonText: { displayText: 'Tebak Bendera' }, type: 1 }], `🎮 Tebak Bendera 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, namebot, m)
 delete tebakbendera[m.sender.split('@')[0]]
 } else m.reply('*Jawaban Salah!*')
 }
@@ -420,7 +439,7 @@ if (tebakkata.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
 kuis = true
 jawaban = tebakkata[m.sender.split('@')[0]]
 if (budy.toLowerCase() == jawaban) {
-await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { displayText: 'Tebak Kata' }, type: 1 }], `🎮 Tebak Kata 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, `${namebot}`, m)
+await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { displayText: 'Tebak Kata' }, type: 1 }], `🎮 Tebak Kata 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, namebot, m)
 delete tebakkata[m.sender.split('@')[0]]
 } else m.reply('*Jawaban Salah!*')
 }
@@ -429,7 +448,7 @@ kuis = true
 jawaban = caklontong[m.sender.split('@')[0]]
 deskripsi = caklontong_desk[m.sender.split('@')[0]]
 if (budy.toLowerCase() == jawaban) {
-await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lontong', buttonText: { displayText: 'Tebak Lontong' }, type: 1 }], `🎮 Cak Lontong 🎮\n\nJawaban Benar 🎉\n*${deskripsi}*\n\nIngin bermain lagi? tekan button dibawah`, `${namebot}`, m)
+await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lontong', buttonText: { displayText: 'Tebak Lontong' }, type: 1 }], `🎮 Cak Lontong 🎮\n\nJawaban Benar 🎉\n*${deskripsi}*\n\nIngin bermain lagi? tekan button dibawah`, namebot, m)
 delete caklontong[m.sender.split('@')[0]]
 delete caklontong_desk[m.sender.split('@')[0]]
 } else m.reply('*Jawaban Salah!*')
@@ -438,7 +457,7 @@ if (tebakkalimat.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
 kuis = true
 jawaban = tebakkalimat[m.sender.split('@')[0]]
 if (budy.toLowerCase() == jawaban) {
-await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kalimat', buttonText: { displayText: 'Tebak Kalimat' }, type: 1 }], `🎮 Tebak Kalimat 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, `${namebot}`, m)
+await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kalimat', buttonText: { displayText: 'Tebak Kalimat' }, type: 1 }], `🎮 Tebak Kalimat 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, namebot, m)
 delete tebakkalimat[m.sender.split('@')[0]]
 } else m.reply('*Jawaban Salah!*')
 }
@@ -446,7 +465,7 @@ if (tebaklirik.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
 kuis = true
 jawaban = tebaklirik[m.sender.split('@')[0]]
 if (budy.toLowerCase() == jawaban) {
-await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lirik', buttonText: { displayText: 'Tebak Lirik' }, type: 1 }], `🎮 Tebak Lirik 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, `${namebot}`, m)
+await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lirik', buttonText: { displayText: 'Tebak Lirik' }, type: 1 }], `🎮 Tebak Lirik 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, namebot, m)
 delete tebaklirik[m.sender.split('@')[0]]
 } else m.reply('*Jawaban Salah!*')
 }
@@ -454,7 +473,7 @@ if (tebaktebakan.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
 kuis = true
 jawaban = tebaktebakan[m.sender.split('@')[0]]
 if (budy.toLowerCase() == jawaban) {
-await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak tebakan', buttonText: { displayText: 'Tebak Tebakan' }, type: 1 }], `🎮 Tebak Tebakan 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, `${namebot}`, m)
+await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak tebakan', buttonText: { displayText: 'Tebak Tebakan' }, type: 1 }], `🎮 Tebak Tebakan 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, namebot, m)
 delete tebaktebakan[m.sender.split('@')[0]]
 } else m.reply('*Jawaban Salah!*')
 }
@@ -481,7 +500,7 @@ if (isWin || isSurender) delete _family100['family100'+m.chat]
 }
 let mentionUser = [...new Set([...(m.mentionedJid || []), ...(m.quoted ? [m.quoted.sender] : [])])]
 for (let jid of mentionUser) {
-let user = global.db.users[jid]
+let user = global.db.data.users[jid]
 if (!user) continue
 let afkTime = user.afkTime
 if (!afkTime || afkTime < 0) continue
@@ -492,8 +511,8 @@ Dia sedang AFK ${reason ? 'dengan alasan ' + reason : 'tanpa alasan'}
 Selama ${clockString(new Date - afkTime)}
 `.trim())
 }
-if (db.users[m.sender].afkTime > -1) {
-let user = global.db.users[m.sender]
+if (db.data.users[m.sender].afkTime > -1) {
+let user = global.db.data.users[m.sender]
 m.reply(`
 Kamu berhenti AFK${user.afkReason ? ' setelah ' + user.afkReason : ''}
 Selama ${clockString(new Date - user.afkTime)}
@@ -730,6 +749,9 @@ var hewan = ['🐔','🦃','🦆','🐐','🐏','🐖','🐑','🐎','🐺']
 var burung = ['🦋','🕷','🐝','🐉','🦆','🦅','🕊','🐧','🐦','🦇']
 var pohon = ['🌲','🌳','🎄','🌴','🎋']
 var mati = ['1 tahun lagi','2 tahun lagi','3 tahun lagi','4 tahun lagi','5 tahun lagi','1 haru lagi','7 hari lagi','1 bulan lagi','7 tahun lagi','bentar lagi','Gak akan mati','1 jam lagi','1 menit lagi']
+var buruh1 = ['🐳','🦈','🐬','🐋','🐟','🐠','🦐','🦑','🦀','🐚']
+var buruh2 = ['🐔','🦃','🐿','🐐','🐏','🐖','🐑','🐎','🐺','🦩']
+var buruh3 = ['🦋','🕷','🐝','🐉','🦆','🦅','🕊','🐧','🐦','🦇']
 walruan = await getBuffer(`https://images.app.goo.gl/FtiBTNRQMBfcuzom9`)
 walbang = await getBuffer(`https://images.app.goo.gl/FtiBTNRQMBfcuzom9`)
 wallung = await getBuffer(`https://images.app.goo.gl/FtiBTNRQMBfcuzom9`)
@@ -749,14 +771,22 @@ menunya = `
 ╰ *Prefix* - 《${prefix}》
 
 《 *Anime Menu* 》
+*♟${prefix}quotesanime*
 *♟${prefix}kusonime*
 *♟${prefix}nekopoion*
 *♟${prefix}getnekopoi*
 *♟${prefix}neonimeon*
 *♟${prefix}otakudesu*
-*♟${prefix}storyanime*
+*♟${prefix}kiryuu*
+*♟${prefix}kiryuus*
+*♟${prefix}nhentai*
 *♟${prefix}randomnhentai*
-*♟${prefix}nhentaisearch*
+*♟${prefix}animeidon*
+*♟${prefix}animeidsearch*
+*♟${prefix}manga*
+*♟${prefix}anime*
+*♟${prefix}character*
+*♟${prefix}storyanime*
 *♟${prefix}loli*
 *♟${prefix}waifu*
 *♟${prefix}ero*
@@ -805,93 +835,252 @@ menunya = `
 *♟${prefix}cekvote*
 *♟${prefix}hapusvote*
 
+《 *Canvas Menu* 》
+*♟${prefix}tobecontinue <reply image/sticker>*
+*♟${prefix}wasted <reply image/sticker>*
+*♟${prefix}wanted <reply image/sticker>*
+*♟${prefix}triggered <reply image/sticker>*
+*♟${prefix}greyscale <reply image/sticker>*
+*♟${prefix}jail <reply image/sticker>*
+*♟${prefix}darkness <reply image/sticker>*
+*♟${prefix}delete <reply image/sticker>*
+*♟${prefix}invert <reply image/sticker>*
+*♟${prefix}joke <reply image/sticker>*
+*♟${prefix}sepia <reply image/sticker>*
+*♟${prefix}blur <reply image/sticker>*
+*♟${prefix}circle <reply image/sticker>*
+*♟${prefix}fuse <reply image/sticker>*
+*♟${prefix}gay <reply image/sticker>*
+*♟${prefix}facepalm <reply image/sticker>*
+*♟${prefix}beautiful <reply image/sticker>*
+*♟${prefix}trash <reply image/sticker>*
+*♟${prefix}toilet <reply image/sticker>*
+*♟${prefix}place <reply image/sticker>*
+*♟${prefix}burning <reply image/sticker>*
+*♟${prefix}shattered <reply image/sticker>*
+*♟${prefix}mirrors <reply image/sticker>*
+*♟${prefix}anaglyph <reply image/sticker>*
+*♟${prefix}iphone <reply image/sticker>*
+*♟${prefix}flame <reply image/sticker>*
+*♟${prefix}frame <reply image/sticker>*
+*♟${prefix}memory <reply image/sticker>*
+*♟${prefix}nature <reply image/sticker>*
+*♟${prefix}ripped <reply image/sticker>*
+*♟${prefix}tearing <reply image/sticker>*
+*♟${prefix}exposure <reply image/sticker>*
+*♟${prefix}scary <reply image/sticker>*
+*♟${prefix}rejected <reply image/sticker>*
+*♟${prefix}brazzers <reply image/sticker>*
+*♟${prefix}ps4 <reply image/sticker>*
+*♟${prefix}distort <reply image/sticker>*
+*♟${prefix}moustache <reply image/sticker>*
+*♟${prefix}frame <reply image/sticker>*
+*♟${prefix}emboss <reply image/sticker>*
+*♟${prefix}spongebob <reply image/sticker>*
+*♟${prefix}discordhouse <reply image/sticker>*
+*♟${prefix}karenhave <reply image/sticker>*
+*♟${prefix}thanos <reply image/sticker>*
+*♟${prefix}approved <reply image/sticker>*
+*♟${prefix}burn <reply image/sticker>*
+*♟${prefix}challenger <reply image/sticker>*
+*♟${prefix}crush <reply image/sticker>*
+*♟${prefix}dictator <reply image/sticker>*
+*♟${prefix}vs <reply image/sticker>*
+*♟${prefix}toonify <reply image/sticker>*
+*♟${prefix}iphonex <reply image/sticker>*
+*♟${prefix}animeface <reply image/sticker>*
+*♟${prefix}stickbug <reply image/sticker>*
+*♟${prefix}badut2 <reply image/sticker>*
+*♟${prefix}badut3 <reply image/sticker>*
+*♟${prefix}missionpassed <reply image/sticker>*
+
 《 *Photo Oxy Menu* 》
 *♟${prefix}sertitolol <text>*
-*♟${prefix}silverplaybutton <text>*
-*♟${prefix}goldplaybutton <text>*
 *♟${prefix}hartatahta <text>*
-*♟${prefix}naruto <text>*
 *♟${prefix}matrix <text>*
 *♟${prefix}breakwall <text>*
 *♟${prefix}dropwater <text>*
 *♟${prefix}wolflogo <text>*
 *♟${prefix}watercolour <text>*
-*♟${prefix}nulis <text>*
+*♟${prefix}silverplaybutton <text>*
+*♟${prefix}goldplaybutton <text>*
+*♟${prefix}coffee <text>*
+*♟${prefix}quotewood <text>*
+*♟${prefix}flaming <text>*
+*♟${prefix}oceansea <text>*
+*♟${prefix}pubg <text>*
 *♟${prefix}shadow <text>*
-*♟${prefix}romantic <text>*
+*♟${prefix}rainbow <text>*
+*♟${prefix}gravity <text>*
+*♟${prefix}burnpaper <text>*
 *♟${prefix}smoke <text>*
-*♟${prefix}burnpapper <text>*
-*♟${prefix}lovemsg <text>*
-*♟${prefix}grassmsg <text>*
-*♟${prefix}lovetext <text>*
-*♟${prefix}coffecup <text>*
-*♟${prefix}butterfly <text>*
-*♟${prefix}harrypotter <text>*
-*♟${prefix}retrolol <text>*
+*♟${prefix}romantic <text>*
+*♟${prefix}naruto <text>*
+*♟${prefix}lovemessage <text>*
+*♟${prefix}grass <text1> text2>*
+*♟${prefix}doubleheart <text1> text2>*
+*♟${prefix}coffecup <text1> text2>*
+*♟${prefix}lovetext <text1> text2>*
+*♟${prefix}butterfly <text1> text2>*
+*♟${prefix}slidetext <text1> text2>*
 
 《 *Text Pro Menu* 》
-*♟${prefix}3dchristmas <text>*
-*♟${prefix}3ddeepsea <text>*
-*♟${prefix}americanflag <text>*
-*♟${prefix}3dscifi <text>*
-*♟${prefix}3drainbow <text>*
-*♟${prefix}3dwaterpipe <text>*
-*♟${prefix}halloweenskeleton <text>*
-*♟${prefix}sketch <text>*
-*♟${prefix}bluecircuit <text>*
-*♟${prefix}space <text>*
-*♟${prefix}metallic <text>*
-*♟${prefix}fiction <text>*
-*♟${prefix}greenhorror <text>*
-*♟${prefix}transformer <text>*
-*♟${prefix}berry <text>*
-*♟${prefix}thunder <text>*
-*♟${prefix}magma <text>*
-*♟${prefix}3dcrackedstone <text>*
-*♟${prefix}3dneonlight <text>*
-*♟${prefix}impressiveglitch <text>*
-*♟${prefix}naturalleaves <text>*
-*♟${prefix}fireworksparkle <text>*
-*♟${prefix}matrix <text>*
-*♟${prefix}dropwater <text>*
-*♟${prefix}harrypotter <text>*
-*♟${prefix}foggywindow <text>*
-*♟${prefix}neondevils <text>*
-*♟${prefix}christmasholiday <text>*
+*♟${prefix}neon <text>*
+*♟${prefix}snowtext <text>*
+*♟${prefix}cloudtext <text>*
+*♟${prefix}3dluxury <text>*
 *♟${prefix}3dgradient <text>*
 *♟${prefix}blackpink <text>*
-*♟${prefix}gluetext <text>*
-*♟${prefix}rainbow <text>*
-*♟${prefix}scfi <text>*
-*♟${prefix}blue <text>*
-*♟${prefix}juice <text>*
-*♟${prefix}purple <text>*
+*♟${prefix}realisticcloud <text>*
+*♟${prefix}cloudsky <text>*
+*♟${prefix}sandsummerbeach <text>*
+*♟${prefix}sandwriting <text>*
+*♟${prefix}sandengraved <text>*
+*♟${prefix}summerysandwriting <text>*
+*♟${prefix}balloontext <text>*
+*♟${prefix}3dglue <text>*
+*♟${prefix}balloontext <text>*
+*♟${prefix}metaldarkgold <text>*
+*♟${prefix}neongalaxy <text>*
+*♟${prefix}1917 <text>*
+*♟${prefix}minion3d <text>*
+*♟${prefix}holographic3d <text>*
+*♟${prefix}metalpurpledual <text>*
+*♟${prefix}deluxesilver <text>*
+*♟${prefix}glossybluemetal <text>*
+*♟${prefix}deluxegold <text>*
+*♟${prefix}glossycarbon <text>*
+*♟${prefix}fabric <text>*
+*♟${prefix}happnewyearfirework <text>* 
+*♟${prefix}newyear3d <text>*
+*♟${prefix}neontext <text>*
+*♟${prefix}metaldarkgoldeffect <text>*
+*♟${prefix}helloweenfire <text>*
+*♟${prefix}bloodontheroastedglass <text>*
+*♟${prefix}xmas3d <text>*
+*♟${prefix}jokerlogo <text>*
+*♟${prefix}wicker <text>*
+*♟${prefix}naturalleaves <text>*
+*♟${prefix}fireworksparkle <text>*
+*♟${prefix}skeleton <text>*
+*♟${prefix}redfoilballon <text>*
+*♟${prefix}purplefoilballon <text>*
+*♟${prefix}pinkfoilballon <text>*
+*♟${prefix}greenfoilballon <text>*
+*♟${prefix}cyanfoilballon <text>*
+*♟${prefix}bluefoilballon <text>*
+*♟${prefix}goldfoilballon <text>*
+*♟${prefix}steel <text>*
+*♟${prefix}ultragloss <text>*
+*♟${prefix}denim <text>*
+*♟${prefix}decorategreen <text>*
+*♟${prefix}decoratepurple <text>*
+*♟${prefix}peridotstone <text>*
+*♟${prefix}rock <text>*
+*♟${prefix}lava <text>*
+*♟${prefix}yellowglass <text>*
+*♟${prefix}purpleglass <text>*
+*♟${prefix}orangeglass <text>*
+*♟${prefix}greeglass <text>*
+*♟${prefix}cyanglass <text>*
+*♟${prefix}blueglass <text>*
+*♟${prefix}redglass <text>*
+*♟${prefix}purpleshnyglass <text>*
+*♟${prefix}captainamerica <text>*
+*♟${prefix}captainamerica <text>*
+*♟${prefix}robotr2d2 <text>*
 *♟${prefix}toxic <text>*
-*♟${prefix}peridot <text>*
-*♟${prefix}metal <text>*
-*♟${prefix}realistic <text>*
-*♟${prefix}impressive <text>*
-*♟${prefix}cracked <text>*
-*♟${prefix}magma <text>*
-*♟${prefix}thunder <text>*
-*♟${prefix}berry <text>*
-*♟${prefix}transformer <text>*
-*♟${prefix}horror <text>*
-*♟${prefix}metallic <text>*
-*♟${prefix}circuit <text>*
-*♟${prefix}sketch <text>*
-*♟${prefix}halloween <text>*
+*♟${prefix}rainbowequalizer <text>*
+*♟${prefix}stone <text1|text2>*
+*♟${prefix}ph <text1|text2>*
+*♟${prefix}3davengers <text1|text2>*
+*♟${prefix}marvelstudios <text1|text2>*
+*♟${prefix}marvel <text1|text2>*
+*♟${prefix}glitch <text1|text2>*
+*♟${prefix}3dmetalsilver <text1|text2>*
+*♟${prefix}3dmetalrosegold <text1|text2>*
+*♟${prefix}3dmetalgold <text1|text2>*
+*♟${prefix}3dmetalgalaxy <text1|text2>*
+*♟${prefix}lionlogomascot <text1|text2>*
+*♟${prefix}wolflogoblackwhite <text1|text2>*
+*♟${prefix}wolflogogalaxy <text1|text2>*
+*♟${prefix}ninjalogo <text1|text2>*
+*♟${prefix}realisticvintage <text1|text2>*
 
 《 *Ephoto Menu* 》
-*♟${prefix}ffcover <text>*
-*♟${prefix}crossfire <text>*
-*♟${prefix}galaxy <text>*
-*♟${prefix}glass <text>*
-*♟${prefix}neon <text>*
-*♟${prefix}beach <text>*
+*♟${prefix}television <text>*
+*♟${prefix}glasses <text>*
 *♟${prefix}blackpink <text>*
-*♟${prefix}igcertificate <text>*
-*♟${prefix}ytcertificate <text>*
+*♟${prefix}neonbp <text>*
+*♟${prefix}coverpubg <text>*
+*♟${prefix}greenbrush <text>*
+*♟${prefix}neonblue <text>*
+*♟${prefix}eraser <text>*
+*♟${prefix}dragonfire <text>*
+*♟${prefix}incandescent <text>*
+*♟${prefix}typography <text>*
+*♟${prefix}letters <text>*
+*♟${prefix}cloth <text>*
+*♟${prefix}graffiti <text>*
+*♟${prefix}metals <text>*
+*♟${prefix}typography2 <text>*
+*♟${prefix}nightstars <text>*
+*♟${prefix}cloud <text>*
+*♟${prefix}caper <text>*
+*♟${prefix}horror <text>*
+*♟${prefix}sunlight <text>*
+*♟${prefix}cake <text>*
+*♟${prefix}pig <text>*
+*♟${prefix}hallowen <text>*
+*♟${prefix}leafgraphy <text>*
+*♟${prefix}water <text>*
+*♟${prefix}crank <text>*
+*♟${prefix}puppy <text>*
+*♟${prefix}pubgavatar <text>*
+*♟${prefix}foggy <text>*
+*♟${prefix}memories <text>*
+*♟${prefix}glazing <text>*
+*♟${prefix}flower <text>*
+*♟${prefix}american <text>*
+*♟${prefix}anonymous <text>*
+*♟${prefix}aov <text>*
+*♟${prefix}ml <text>*
+*♟${prefix}warface <text>*
+*♟${prefix}tiger <text>*
+*♟${prefix}arrow <text>*
+*♟${prefix}arrow2 <text>*
+*♟${prefix}diary <text>*
+*♟${prefix}artistic <text>*
+*♟${prefix}diaryframe <text>*
+*♟${prefix}wood <text1|text2>*
+*♟${prefix}notebook <text1|text2>*
+*♟${prefix}pencil <text1|text2>*
+*♟${prefix}wposter <text1|text2>*
+*♟${prefix}adventure <text1|text2>*
+*♟${prefix}heated <text1|text2>*
+*♟${prefix}buoys <text1|text2>*
+*♟${prefix}writestatus <text1|text2>*
+*♟${prefix}quotestatus <text1|text2>*
+*♟${prefix}juventus <text1|text2>*
+*♟${prefix}scholes <text1|text2>*
+*♟${prefix}collage <reply image/sticker>*
+*♟${prefix}cyberpunk <reply image/sticker>*
+*♟${prefix}billboard <reply image/sticker>*
+*♟${prefix}fire <reply image/sticker>*
+*♟${prefix}rain <reply image/sticker>*
+*♟${prefix}ring <reply image/sticker>*
+*♟${prefix}cat <reply image/sticker>*
+*♟${prefix}sad <reply image/sticker>*
+*♟${prefix}cinemagraph <reply image/sticker>*
+*♟${prefix}vhs <reply image/sticker>*
+*♟${prefix}heart <reply image/sticker>*
+*♟${prefix}smoke <reply image/sticker>*
+*♟${prefix}handlefire <reply image/sticker>*
+*♟${prefix}spectrum <reply image/sticker>*
+*♟${prefix}painting <reply image/sticker>*
+
+《 *Video Menu* 》
+*♟${prefix}shaunthesheep <url>*
 
 《 *Downloader Menu* 》
 *♟${prefix}twitter <url>*
@@ -904,6 +1093,8 @@ menunya = `
 *♟${prefix}tiktok <url>*
 *♟${prefix}tiktoknowm <url>*
 *♟${prefix}tiktokmp3 <url>*
+*♟${prefix}cocofun <url>*
+*♟${prefix}xnxx <url>*
 
 《 *Anonymous Menu* 》
 *♟${prefix}anonymous*
@@ -915,7 +1106,7 @@ menunya = `
 《 *Search Menu* 》
 *♟${prefix}play <query>*
 *♟${prefix}ytsearch <query>*
-*♟${prefix}brainly <quey>*
+*♟${prefix}brainly <query>*
 *♟${prefix}wikipedia <query>*
 *♟${prefix}google <query>*
 *♟${prefix}playstore <query>*
@@ -929,14 +1120,16 @@ menunya = `
 *♟${prefix}wattpaduser <query>*
 *♟${prefix}wallpaper <query>*
 *♟${prefix}wikimedia <query>*
-*♟${prefix}manga <query>*
-*♟${prefix}anime <query>*
-*♟${prefix}character <query>*
 *♟${prefix}webtoon <query>*
 *♟${prefix}joox <query>*
 *♟${prefix}liriklagu <query>*
 *♟${prefix}chordlagu <query>*
 *♟${prefix}translate <query>*
+*♟${prefix}stickerly <query>*
+*♟${prefix}ttp <query>*
+*♟${prefix}pornhub <query>*
+*♟${prefix}kbbi <query>*
+*♟${prefix}kodepos <query>*
 *♟${prefix}get <url>*
 *♟${prefix}ssweb <url>*
 
@@ -967,6 +1160,7 @@ menunya = `
 *♟${prefix}miningxp*
 *♟${prefix}mancing*
 *♟${prefix}adventure*
+*♟${prefix}tembak <udara/darat/laut>*
 *♟${prefix}berburu*
 *♟${prefix}menebang*
 *♟${prefix}mulung*
@@ -999,7 +1193,7 @@ menunya = `
 *♟${prefix}sellhewan ikan*
  
 《 *Random Menu* 》
-*♟${prefix}quotesanime*
+*♟${prefix}jamdunia*
 *♟${prefix}darkjoke*
 *♟${prefix}meme*
 *♟${prefix}nickff*
@@ -1012,8 +1206,16 @@ menunya = `
 *♟${prefix}ceritaperjuangan*
 *♟${prefix}qrcode*
 *♟${prefix}cecan*
+*♟${prefix}asupan*
+*♟${prefix}bokep*
 *♟${prefix}wallpaperneon*
 *♟${prefix}wallpaperrandom*
+*♟${prefix}faktaunik*
+*♟${prefix}katabijak*
+*♟${prefix}quotesen*
+*♟${prefix}quotes*
+*♟${prefix}quotesislami*
+*♟${prefix}quotespic*
 
 《 *Islamic Menu* 》
 *♟${prefix}iqra*
@@ -1088,7 +1290,6 @@ menunya = `
 *♟${prefix}lockcmd*
 
 《 *Main Menu* 》
-*♟${prefix}carabuatbot*
 *♟${prefix}botstatus*
 *♟${prefix}runtime*
 *♟${prefix}speed*
@@ -1114,118 +1315,52 @@ menunya = `
 *♟${prefix}eval*
 *♟${prefix}$, >, => <code>*
 
-*Note : Bot Masih Dalam Tahap Pengembangan Jika Ada Yang Error Mohon Segera Hubungi Ke Owner*`
+*Note : Bot Masih Dalam Tahap Pengembangan Jika Ada Yang Error Mohon Segera Hubungi Owner*`
 
 switch(command) {
 case 'thanksto': case 'tqtq': case 'thanks': {
 m.reply(`*---Big Thanks To---*
 *Adiwajshing (penyedia module)*
 *DikaArdnt (penyedia base)*
-*Febriansyah (penyedia rpg fitur)*
+*Febriansyah (penyedia rpg function)*
 
-*Zenz (penyedia api (zenzapi.xyz))*
 *Zeks (penyedia api(zeks.me))*
 *Anto (penyedia api(hardianto.xyz))* 
-*Adiixyz (penyedia api(adiixyzapi.herokuapp.com))*
 *Rimuru (penyedia api(myselfff.herokuapp.com))*
 *Farhan (penyedia api(api-xcoders.xyz))*
+*Nurutomo (penyedia api(api.xteam.xyz))*
+*Zekais (penyedia api(api.zekais.com))*
 
-*Xfar (penyedia module api(Xfarr-api))*
-*Hxz (penydia module api(hxz-api))*`)
+*Xfar (penyedia module api(xfarr-api))*
+*Hxz (penyedia module api(hxz-api))*`)
 }
 break
 case 'menu': case '?': case 'help': case 'allmenu': case 'menuall': case 'semuamenu': {
 if(menutype == 'gif'){
-sendButton5(from, menunya, `${namebot}`, await createMessage(from, {video: {url: "./lib/kidvid.mp4", caption: menunya}, gifPlayback: true}))}
+sendButton5(from, menunya, namebot, await createMessage(from, {video: {url: "./lib/kidvid.mp4", caption: menunya}, gifPlayback: true}))}
 }
 if(menutype == 'location'){
-hisoka.sendMessage(from, { caption: menunya, location: { jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') }, templateButtons: buttonsDefault, footer: `${namebot}`, mentions: [m.sender] })
+hisoka.sendMessage(from, { caption: menunya, location: { jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') }, templateButtons: buttonsDefault, footer: namebot, mentions: [m.sender] })
 }
 if(menutype == 'image'){
-hisoka.sendMessage(from, { caption: menunya, image: { jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') }, templateButtons: buttonsDefault, footer: `${namebot}`, mentions: [m.sender] })
+hisoka.sendMessage(from, { caption: menunya, image: { jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') }, templateButtons: buttonsDefault, footer: namebot, mentions: [m.sender] })
 } 
-break
-case 'carabuatbot': case 'tutorial': case 'cbb': case 'buatbot': case 'jadibot': {
-caption = (`*🌠Tutorial Membuat Bot Whatsapp*
-
-*Siapkan Apk :*
-*Termux*
-*Wa Untuk Bot*
-*2 Hp*
-
-*Masuk Ke Apk Termux Dan Ketikan Command Dibawah Ini*
-*$pkg update && pkg upgrade*
-*$pkg install nodejs*
-*&pkg install git*
-
-*Dengan Git*
-*$git clone https://github.com/KunzxD404/V2*
-*$npm install*
-*$npm start*
-
-*Dengan File SDcard*
-*$termux-setup-storage*
-*$cd /sdcard/V2 (sesuaikan file)*
-*yarn*
-
-*Jika Error Npm Install* :
-*$pkg install yarn*
-*$yarn*
-*$npm start*
-
-*NOTE : Tanda $ Jangan Diikuti*
-
-*Jika Sudah npm start Ke Apk Whatsapp Ketuk Titik Tiga Atas Kanan Dan Pilih Perangkat Tertaut Dan Tautkan Perangkat*
-*Dan Foto Qr Di Termux (hp 1) Dengan Hp Yg Ke 2 Dan Hp 1 Scan Yang Di Hp 2*
-
-*Semoga Berhasil Dan Jika Tidak Mengerti Bisa Hubungi Saya Di Whatsapp Berikut* :
-)
-const butman = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-templateMessage: {
-hydratedTemplate: {
-hydratedContentText: caption,
-locationMessage: { 
-jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-hydratedFooterText: `${namebot}`,
-hydratedButtons: [
-{
-"urlButton": {
-"displayText": "Chat Me",
-"url": "wa.me/6287778886786"
-}
-},
-{
-"urlButton": {
-"displayText": "My Group",
-"url": "https://chat.whatsapp.com/GDZOBuMkFSCKw6mzDUDoPd"
-}
-},
-{
-"quickReplyButton": {
-"displayText": "Menu Bot",
-"id": `${prefix}menu`
-}
-},
-{
-"quickReplyButton": {
-"displayText": "Script",
-"id": `${prefix}sc`
-}
-}
-]
-}
-}
-}), { userJid: m.chat, quoted: m })
-hisoka.relayMessage(m.chat, butman.message, { messageId: butman.key.id}, { quoted: m })}
 break
 case 'sc': case 'sourcecode': case 'script': {
 m.reply('Script : https://github.com/DikaArdnt/Hisoka-Morou\n\n Dont Forget Give Star')}
 break
 case 'afk': {
-let user = global.db.users[m.sender]
+let user = global.db.data.users[m.sender]
 user.afkTime = + new Date
 user.afkReason = text
-m.reply(`${m.pushName} Telah Afk${text ? ': ' + text : ''}`)}
+m.reply(`${m.pushName} Telah Afk${text ? ': ' + text : ''}`)
+}
+break
+case 'quotesanime': case 'quoteanime': {
+let { quotesAnime } = require('./lib/scraper')
+let anu = await quotesAnime()
+result = anu[Math.floor(Math.random() * anu.length)]
+m.reply(`${result.quotes}_\n\nBy '${result.karakter}', ${result.anime}\n\n- ${result.up_at}`)}
 break
 case 'getdatanekopoi': case 'nekopoidetail': case 'getnekopoi': {
 if (!q) throw mess.q
@@ -1343,36 +1478,207 @@ ${anu.result.download[0].download_list[4].download_link}`
 hisoka.sendMessage(m.chat, { image: { url: anu.result.thumbs }, caption: `${textnya}` }, { quoted: m })
 }
 break
-case 'nhentaisearch': case 'nhentai': {
+case 'randomnhentai': case 'nhentairandom': {
+m.reply(mess.wait)
+let anu = await fetchJson(`https://api-xcoders.xyz/api/anime/randomnhentai?apikey=${apikey.xkey}`)
+textnya = `*Title* : *${anu.result.titleID}*
+*Parodies* : *${anu.result.meta[0].parodies}*
+*Character* : *${anu.result.meta[1].characters}*
+*Artist* : *${anu.result.meta[3].artists}*
+*Groups* : *${anu.result.meta[4].groups}*
+*Languange* : *${anu.result.meta[5].languanges}*
+*Categories* : *${anu.result.meta[6].categories}*
+*Pages* : *${anu.result.meta[7].pages}*
+*Uploaded* : *${anu.result.meta[8].uploaded}*
+*Code* : *${anu.result.code}*
+`
+hisoka.sendMessage(m.chat, { image: { url: anu.result.thumbnail }, caption: `${textnya}` }, { quoted: m })
+}
+break
+case 'nhentai': case 'nhentaisearch': case 'nhentaicode': {
+if (!q) throw mess.q
+anu = await fetchJson(`https://api-xcoders.xyz/api/anime/codenhentai?code=${q}&apikey=${apikey.xkey}`)
+textnya = `*Title* : *${anu.result.titleID}*
+*Parodies* : *${anu.result.meta[0].parodies}*
+*Character* : *${anu.result.meta[1].characters}*
+*Artist* : *${anu.result.meta[3].artists}*
+*Groups* : *${anu.result.meta[4].groups}*
+*Languange* : *${anu.result.meta[5].languanges}*
+*Categories* : *${anu.result.meta[6].categories}*
+*Pages* : *${anu.result.meta[7].pages}*
+*Uploaded* : *${anu.result.meta[8].uploaded}*
+*Url* : *https://nhentai.net/g/${anu.result.code}*
+`
+hisoka.sendMessage(m.chat, { image: { url: anu.result.thumbnail }, caption: `${textnya}` }, { quoted: m })
+}
+break
+case 'kiryuu': case 'kiryu': {
 if (!q) throw mess.q
 m.reply(mess.wait)
-let anu = await fetchJson(`https://adiixyzapi.herokuapp.com/api/nHentaiSearch?query=gotoubun`)
-textnya = `*Title* : *${anu.result[0].title}*
-*Id* : *${anu.result[0].id}*
-*Languange* : *${anu.result[0].language}*
+anu = await fetchJson(`https://api.zekais.com/kiryuu?query=${q}&apikey=${apikey.zekais}`)
+txt = `*Title* : *${anu.title}*
+*Genre* : *${anu.genre}*
+*Type* : *${anu.type}*
+*Progress* : *${anu.progress}
+*Post* : *${anu.posted_on}*
+
+*Title* : ${anu.result[0].name}
+*Update* : ${anu.result[0].update}
+*Url* : ${anu.result[0].url}
+*Download* : ${anu.result[0].download}
+
+*Title* : ${anu.result[1].name}
+*Update* : ${anu.result[1].update}
+*Url* : ${anu.result[1].url}
+*Download* : ${anu.result[1].download}
+
+*Title* : ${anu.result[2].name}
+*Update* : ${anu.result[2].update}
+*Url* : ${anu.result[2].url}
+*Download* : ${anu.result[2].download}`
+hisoka.sendMessage(m.chat, { image: { url: `${anu.thumb}` }, caption: txt }, { quoted: m })}
+break
+case 'kiryuusearch': case 'kiryusearch': case 'kiryus': {
+if (!q) throw mess.q
+m.reply(mess.wait)
+anu = await fetchJson(`https://api.zekais.com/kiryuusr?query=${q}&apikey=${apikey.zekais}`)
+txt = `*Title* : *${anu.result[0].title}*
+*Type* : *${anu.result[0].type}*
+*Chapter* : *${anu.result[0].chapter}
+*Rating* : *${anu.result[0].rating}*
+*Url* : *${anu.result[0].url}*
 
 *Title* : *${anu.result[1].title}*
-*Id* : *${anu.result[1].id}*
-*Languange* : *${anu.result[1].language}*
+*Type* : *${anu.result[1].type}*
+*Chapter* : *${anu.result[1].chapter}
+*Rating* : *${anu.result[1].rating}*
+*Url* : *${anu.result[1].url}*
 
 *Title* : *${anu.result[2].title}*
-*Id* : *${anu.result[2].id}*
-*Languange* : *${anu.result[2].language}*
+*Type* : *${anu.result[2].type}*
+*Chapter* : *${anu.result[2].chapter}
+*Rating* : *${anu.result[2].rating}*
+*Url* : *${anu.result[2].url}*
 
 *Title* : *${anu.result[3].title}*
-*Id* : *${anu.result[3].id}*
-*Languange* : *${anu.result[3].language}*
+*Type* : *${anu.result[3].type}*
+*Chapter* : *${anu.result[3].chapter}
+*Rating* : *${anu.result[3].rating}*
+*Url* : *${anu.result[3].url}*
 
 *Title* : *${anu.result[4].title}*
-*Id* : *${anu.result[4].id}*
-*Languange* : *${anu.result[1].language}*
+*Type* : *${anu.result[4].type}*
+*Chapter* : *${anu.result[4].chapter}
+*Rating* : *${anu.result[4].rating}*
+*Url* : *${anu.result[4].url}*
 `
-hisoka.sendMessage(m.chat, { image: { url: `https://telegra.ph/file/55df6aebcf00f207ea53f.jpg` }, caption: `${textnya}` }, { quoted: m })
+hisoka.sendMessage(m.chat, { image: { url: `${anu.result[0].thumb}` }, caption: txt }, { quoted: m })}
+break
+case 'animeid': case 'animeidon': {
+m.reply(mess.wait)
+anu = await fetchJson(`https://api.zekais.com/anidnew?apikey=${apikey.zekais}`)
+txt = `*Title* : *${anu.result[0].name}*
+*Episode* : *${anu.result[0].episode}*
+*Url* : *${anu.result[0].url}*
+
+*Title* : *${anu.result[1].title}*
+*Episode* : *${anu.result[1].episode}*
+*Url* : *${anu.result[1].url}*
+
+*Title* : *${anu.result[2].title}*
+*Episode* : *${anu.result[2].episode}*
+*Url* : *${anu.result[2].url}*
+
+*Title* : *${anu.result[3].title}*
+*Episode* : *${anu.result[3].episode}*
+*Url* : *${anu.result[3].url}*
+
+*Title* : *${anu.result[4].title}*
+*Episode* : *${anu.result[4].episode}*
+*Url* : *${anu.result[4].url}*
+`
+hisoka.sendMessage(m.chat, { image: { url: anu.result[0].thumb }, caption: txt }, { quoted: m })}
+break
+case 'animeidsearch': case 'animeidsearch': {
+if (!q) throw mess.q
+m.reply(mess.wait)
+anu = await fetchJson(`https://api.zekais.com/anidsr?query=${q}&apikey=${apikey.zekais}`)
+txt = `*Title* : *${anu.result[0].name}*
+*Rating* : *${anu.result[0].stars}*
+*Genre* : *${anu.result[0].genre}*
+*Type* : *${anu.result[0].type}*
+*Sinopsis* : ${anu.result[0].desc}*
+*Url* : *${anu.result[0].url}*
+
+*Title* : *${anu.result[1].name}*
+*Rating* : *${anu.result[1].stars}*
+*Genre* : *${anu.result[1].genre}*
+*Type* : *${anu.result[1].type}*
+*Sinopsis* : ${anu.result[1].desc}*
+*Url* : *${anu.result[1].url}*
+
+*Title* : *${anu.result[2].name}*
+*Rating* : *${anu.result[2].stars}*
+*Genre* : *${anu.result[2].genre}*
+*Type* : *${anu.result[2].type}*
+*Sinopsis* : ${anu.result[2].desc}*
+*Url* : *${anu.result[2].url}*
+
+*Title* : *${anu.result[3].name}*
+*Rating* : *${anu.result[3].stars}*
+*Genre* : *${anu.result[3].genre}*
+*Type* : *${anu.result[3].type}*
+*Sinopsis* : ${anu.result[3].desc}*
+*Url* : *${anu.result[3].url}*
+
+*Title* : *${anu.result[4].name}*
+*Rating* : *${anu.result[4].stars}*
+*Genre* : *${anu.result[4].genre}*
+*Type* : *${anu.result[4].type}*
+*Sinopsis* : ${anu.result[4].desc}*
+*Url* : *${anu.result[4].url}*
+`
+hisoka.sendMessage(m.chat, { image: { url: `${anu.result[0].thumb}` }, caption: txt }, { quoted: m })}
+break
+case 'manga': {
+if (!q) throw mess.q
+await m.reply(mess.wait)
+xfar.Manga(q).then(async data => {
+let txt = `*------「 MANGA-SEARCH 」------*\n\n`
+for (let i of data) {
+txt += `*Title :* *${i.judul}*\n`
+txt += `*Url :* *${i.link}*\n`
 }
+hisoka.sendMessage(m.chat, { image: { url: data[0].thumbnail }, caption: `${txt}` }, { quoted: m})
+})}
+break
+case 'anime': {
+if (!q) throw mess.q
+await m.reply(mess.wait)
+xfar.Anime(q).then(async data => {
+let txt = `*-------「 ANIME-SEARCH 」-------*\n\n`
+for (let i of data) {
+txt += `*Title :* *${i.judul}*\n`
+txt += `*Url :* *${i.link}*\n`
+}
+hisoka.sendMessage(m.chat, { image: { url: data[0].thumbnail }, caption: `${txt}` }, { quoted: m})
+})}
+break
+case 'char': case 'character': {
+if (!q) throw mess.q
+await m.reply(mess.wait)
+xfar.Character(q).then(async data => {
+let txt = `*-------「 CHARACTER-SEARCH 」-------*\n\n`
+for (let i of data) {
+txt += `*Name :* *${i.character}*\n`
+txt += `*Link :* *${i.link}*\n`
+}
+hisoka.sendMessage(m.chat, { image: { url: data[0].thumbnail }, caption: `${txt}` }, { quoted: m})
+})}
 break
 case 'randomanime': case 'storyanime': {
 m.reply(mess.wait)
-hisoka.sendMessage(m.chat, { video: { url: `https://kunz-gans.herokuapp.com/anime/storyanime` }, caption: mess.succ }, { quoted: m})}
+hisoka.sendMessage(m.chat, { video: { url: `https://tyz-api.herokuapp.com/anime/storyanime` }, caption: mess.succ }, { quoted: m})}
 break
 case 'hentai': case 'lesbian': case 'ero': case 'pussy': case 'yuri': case 'kuni': case 'tits': case 'bj': case 'kitsune': case 'keta': {
 m.reply(mess.wait)
@@ -1420,7 +1726,7 @@ teks_vote = `*「 VOTE 」*
 let buttonsVote = [ {buttonId: `${prefix}upvote`, buttonText: {displayText: '𝚄𝙿𝚅𝙾𝚃𝙴'}, type: 1}, {buttonId: `${prefix}devote`, buttonText: {displayText: '𝙳𝙴𝚅𝙾𝚃𝙴'}, type: 1} ]
 let buttonMessageVote = {
 text: teks_vote,
-footer: `${namebot}`,
+footer: namebot,
 buttons: buttonsVote,
 headerType: 1
 }
@@ -1457,7 +1763,7 @@ ${vote[m.chat][2].map((v, i) => `├ ${i + 1}. @${v.split`@`[0]}`).join('\n')}
 let buttonsUpvote = [ {buttonId: `${prefix}upvote`, buttonText: {displayText: '𝚄𝙿𝚅𝙾𝚃𝙴'}, type: 1}, {buttonId: `${prefix}devote`, buttonText: {displayText: '𝙳𝙴𝚅𝙾𝚃𝙴'}, type: 1}]
 let buttonMessageUpvote = {
 text: teks_vote,
-footer: `${namebot}`,
+footer: namebot,
 buttons: buttonsUpvote,
 headerType: 1,
 mentions: menvote
@@ -1495,7 +1801,7 @@ ${vote[m.chat][2].map((v, i) => `├ ${i + 1}. @${v.split`@`[0]}`).join('\n')}
 let buttonsDevote = [ {buttonId: `${prefix}upvote`, buttonText: {displayText: '𝚄𝙿𝚅𝙾𝚃𝙴'}, type: 1}, {buttonId: `${prefix}devote`, buttonText: {displayText: '𝙳𝙴𝚅𝙾𝚃𝙴'}, type: 1} ]
 let buttonMessageDevote = {
 text: teks_vote,
-footer: `${namebot}`,
+footer: namebot,
 buttons: buttonsDevote,
 headerType: 1,
 mentions: menvote
@@ -1725,7 +2031,7 @@ throw `Kirim Gambar/Video Dengan Caption ${prefix + command}\nDurasi Video 1-9 D
 }
 }
 break
-case 'stickerwm': case 'swm': {
+case 'stickerwm': case 'swm': case 'take': {
 if (!quoted) throw `Balas Video/Image Dengan Caption ${prefix + command}`
 if (!q.includes('|')) return reply(`Kirim perintah *${prefix + command}* packname|author`)
 var teks1 = q.split('|')[0] ? q.split('|')[0] : ''
@@ -1826,7 +2132,7 @@ m.reply(mess.wait)
 let media = await quoted.download()
 let { toAudio } = require('./lib/converter')
 let audio = await toAudio(media, 'mp4')
-hisoka.sendMessage(m.chat, {document: audio, mimetype: 'audio/mpeg', fileName: `Convert By ${`${namebot}`}.mp3`}, { quoted : m })
+hisoka.sendMessage(m.chat, {document: audio, mimetype: 'audio/mpeg', fileName: `Convert By ${namebot}.mp3`}, { quoted : m })
 }
 break
 case 'tovn': case 'toptt': {
@@ -1873,67 +2179,13 @@ xfar.Pinterest(q).then(async data => {
 hisoka.sendMessage(m.chat, { image: { url: data.url }, caption: `*Media Url* : ${data.url}` }, { quoted: m})
 })}
 break
-case 'wallpaper': {
-if (!q) throw mess.q
-m.reply(mess.wait)
-wallpaper(text).then( async anu =>{
-result = anu[Math.floor(Math.random(), anu.length)]
-let gam = await getBuffer(result.image[0])
-hisoka.sendMessage(m.chat, { image: { url: gam }, caption: `*Media Url : *${result.image}` }, { quoted: m})
-})
-.catch((err) => {
-m.reply(mess.error)
-})
+case 'wikimedia': case 'wallpaper': {
+if (!text) throw 'Masukkan Query Title'
+let { wikimedia } = require('./lib/scraper')
+anu = await wikimedia(text)
+result = anu[Math.floor(Math.random() * anu.length)]
+hisoka.sendMessage(m.chat, { image: { url: result.image }, caption: `*Media Url* : ${result.image}` }, { quoted: m})
 }
-break
-case 'wikimedia': {
-if (!q) throw mess.q
-m.reply(mess.wait)
-wikimedia(text).then( async anu =>{
-result = anu[Math.floor(Math.random(), anu.length)]
-let gam = await getBuffer(result.image[0])
-hisoka.sendMessage(m.chat, { image: { url: gam }, caption: `*Media Url : *${result.image}` }, { quoted: m})
-})
-.catch((err) => {
-m.reply(mess.error)
-})
-}
-break
-case 'manga': {
-if (!q) throw mess.q
-await m.reply(mess.wait)
-xfar.Manga(q).then(async data => {
-let txt = `*------「 MANGA-SEARCH 」------*\n\n`
-for (let i of data) {
-txt += `*Title :* *${i.judul}*\n`
-txt += `*Url :* *${i.link}*\n`
-}
-hisoka.sendMessage(m.chat, { image: { url: data[0].thumbnail }, caption: `${txt}` }, { quoted: m})
-})}
-break
-case 'anime': {
-if (!q) throw mess.q
-await m.reply(mess.wait)
-xfar.Anime(q).then(async data => {
-let txt = `*-------「 ANIME-SEARCH 」-------*\n\n`
-for (let i of data) {
-txt += `*Title :* *${i.judul}*\n`
-txt += `*Url :* *${i.link}*\n`
-}
-hisoka.sendMessage(m.chat, { image: { url: data[0].thumbnail }, caption: `${txt}` }, { quoted: m})
-})}
-break
-case 'char': case 'character': {
-if (!q) throw mess.q
-await m.reply(mess.wait)
-xfar.Character(q).then(async data => {
-let txt = `*-------「 CHARACTER-SEARCH 」-------*\n\n`
-for (let i of data) {
-txt += `*Name :* *${i.character}*\n`
-txt += `*Link :* *${i.link}*\n`
-}
-hisoka.sendMessage(m.chat, { image: { url: data[0].thumbnail }, caption: `${txt}` }, { quoted: m})
-})}
 break
 case 'film': {
 if (!q) throw mess.q
@@ -2072,7 +2324,7 @@ m.reply(`*------「 RESEPMAKANAN-SEARCH 」------*\n\n
 
 *Membuat* : ${q}
 *Caranya* :
-${anu.result.list}`)}
+${anu.list}`)}
 break
 case 'grupwa': case 'linkgrup': {
 if (!q) throw mess.q
@@ -2146,6 +2398,120 @@ store += `*Nama* : ${i.name}
 *Link* : ${i.link}\n`
 }
 m.reply(store)}
+break
+case 'pornhub': case 'porn': {
+if (!q) throw mess.q
+anu = await fetchJson(`https://api-xcoders.xyz/api/search/pornhub?query=${q}&apikey=${apikey.xkey}`)
+txt = `*Title* : ${anu.result[0].title}
+*Duration* : ${anu.result[0].duration}
+*Viewers* : ${anu.result[0].viewers}
+*Rating* : ${anu.result[0].rating}
+*Published* : ${anu.result[0].published}
+*Url* : ${anu.result[0].url}
+
+*Title* : ${anu.result[1].title}
+*Duration* : ${anu.result[1].duration}
+*Viewers* : ${anu.result[1].viewers}
+*Rating* : ${anu.result[1].rating}
+*Published* : ${anu.result[1].published}
+*Url* : ${anu.result[1].url}
+
+*Title* : ${anu.result[2].title}
+*Duration* : ${anu.result[2].duration}
+*Viewers* : ${anu.result[2].viewers}
+*Rating* : ${anu.result[2].rating}
+*Published* : ${anu.result[2].published}
+*Url* : ${anu.result[2].url}
+
+*Title* : ${anu.result[3].title}
+*Duration* : ${anu.result[3].duration}
+*Viewers* : ${anu.result[3].viewers}
+*Rating* : ${anu.result[3].rating}
+*Published* : ${anu.result[3].published}
+*Url* : ${anu.result[3].url}
+
+*Title* : ${anu.result[4].title}
+*Duration* : ${anu.result[4].duration}
+*Viewers* : ${anu.result[4].viewers}
+*Rating* : ${anu.result[4].rating}
+*Published* : ${anu.result[4].published}
+*Url* : ${anu.result[4].url}
+`
+m.reply(txt)}
+break
+case 'kbbi': {
+if (!q) throw mess.q
+anu = await fetchJson(`https://api-xcoders.xyz/api/info/kbbi?query=${q}&apikey=${apikey.xkey}`)
+txt = `*Query* : *${anu.result.query}*
+*Jawab* : 
+${anu.result[0].arti},
+${anu.result[1].arti}`
+m.reply(txt)}
+break
+case 'kodepos': case 'pos': {
+if (!q) throw mess.q
+anu = await fetchJson(`https://api.xteam.xyz/kodepos?q=${q}&APIKEY=${apikey.xtkey}`)
+txt = `*Provinsi* : ${anu.result[0].province}
+*City* : ${anu.result[0].city}
+*Subdistrict* : ${anu.result[0].subdistrict}
+*Urban* : ${anu.result[0].urban}
+*Kode* ^: ${anu.result[0].postalcode}
+
+*Provinsi* : ${anu.result[1].province}
+*City* : ${anu.result[1].city}
+*Subdistrict* : ${anu.result[1].subdistrict}
+*Urban* : ${anu.result[1].urban}
+*Kode* ^: ${anu.result[1].postalcode}
+
+*Provinsi* : ${anu.result[2].province}
+*City* : ${anu.result[2].city}
+*Subdistrict* : ${anu.result[2].subdistrict}
+*Urban* : ${anu.result[2].urban}
+*Kode* ^: ${anu.result[2].postalcode}
+
+*Provinsi* : ${anu.result[3].province}
+*City* : ${anu.result[3].city}
+*Subdistrict* : ${anu.result[3].subdistrict}
+*Urban* : ${anu.result[3].urban}
+*Kode* ^: ${anu.result[3].postalcode}
+
+*Provinsi* : ${anu.result[4].province}
+*City* : ${anu.result[4].city}
+*Subdistrict* : ${anu.result[4].subdistrict}
+*Urban* : ${anu.result[4].urban}
+*Kode* ^: ${anu.result[4].postalcode}
+
+*Provinsi* : ${anu.result[5].province}
+*City* : ${anu.result[5].city}
+*Subdistrict* : ${anu.result[5].subdistrict}
+*Urban* : ${anu.result[5].urban}
+*Kode* ^: ${anu.result[5].postalcode}
+
+*Provinsi* : ${anu.result[6].province}
+*City* : ${anu.result[6].city}
+*Subdistrict* : ${anu.result[6].subdistrict}
+*Urban* : ${anu.result[6].urban}
+*Kode* ^: ${anu.result[6].postalcode}
+
+*Provinsi* : ${anu.result[7].province}
+*City* : ${anu.result[7].city}
+*Subdistrict* : ${anu.result[7].subdistrict}
+*Urban* : ${anu.result[7].urban}
+*Kode* ^: ${anu.result[7].postalcode}
+
+*Provinsi* : ${anu.result[8].province}
+*City* : ${anu.result[8].city}
+*Subdistrict* : ${anu.result[8].subdistrict}
+*Urban* : ${anu.result[8].urban}
+*Kode* ^: ${anu.result[8].postalcode}
+
+*Provinsi* : ${anu.result[9].province}
+*City* : ${anu.result[9].city}
+*Subdistrict* : ${anu.result[9].subdistrict}
+*Urban* : ${anu.result[9].urban}
+*Kode* ^: ${anu.result[9].postalcode}
+`
+m.reply(txt)}
 break
 case 'play': {
 if (!q) throw mess.wrongFormat
@@ -2235,12 +2601,6 @@ txt += `• *Link* : *${anu.result[0].link}\n`
 m.reply(txt)
 .catch(e => m.reply(e))}
 break
-case 'quotesanime': case 'quoteanime': {
-anu = await quotesAnime()
-result = anu[Math.floor(Math.random() * anu.length)]
-m.reply(`${result.quotes}_\n\nBy '${result.karakter}', ${result.anime}\n\n- ${result.up_at}`)
-}
-break
 case 'joke': case 'darkjoke': {
 m.reply(mess.wait)
 anu = await getBuffer(`https://api-xcoders.xyz/api/random/darkjoke?apikey=${apikey.xkey}`)
@@ -2298,6 +2658,14 @@ break
 case 'cecan': case 'randomcecan': {
 hisoka.sendMessage(from, { image: { url: `http://hadi-api.herokuapp.com/api/randomImage/cecan`, caption: mess.succ }}, { quoted: m })}
 break
+case 'asupan': case 'asupanrandom': {
+anu = await fetchJson(`https://api.zekais.com/ptlvid?apikey=${apikey.zekais}`)
+hisoka.sendMessage(from, { video: { url: anu.result, caption: mess.succ }}, { quoted: m })}
+break
+case 'randombokep': case 'bokep': {
+anu = await fetchJson(`https://api-xcoders.xyz/api/random/bokep?apikey=${apikey.xkey}`)
+hisoka.sendMessage(from, { video: { url: anu.result.url, caption: mess.succ }}, { quoted: m })}
+break
 case 'wallneon': case 'wallpaperneon': {
 anu = await fetchJson(`https://myselfff.herokuapp.com/docs/wallpaper/wallneon`)
 hisoka.sendMessage(from, { image: { url: anu.list.gambar }}, { quoted: m })}
@@ -2314,6 +2682,39 @@ m.reply(`*Wib* : ${anu.result.wib}
 *Matahatari* : ${anu.result.matahari}
 *Tanggal* : ${anu.result.tanggal}
 *Detail* : ${anu.result.detail}`)}
+break
+case 'faktaunik': case 'fakta': {
+anu = await fetchJson(`https://api.zekais.com/fakta?apikey=${apikey.zekais}`)
+m.reply(anu.result)}
+break
+case 'bijak': case 'katabijak': case 'bucin': case 'katabucin': {
+anu = await fetchJson(`https://api.zekais.com/${command}?apikey=${apikey.zekais}`)
+m.reply(anu.result)}
+break
+case 'quotes': case 'randomquotes': {
+anu = await fetchJson(`https://api.zekais.com/quotes?apikey=${apikey.zekais}`)
+m.reply(`${anu.quotes}
+
+*${anu.author}*`)}
+break
+case 'quotesen': case 'randomquotesen': {
+anu = await fetchJson(`https://api.zekais.com/quotesen?apikey=${apikey.zekais}`)
+m.reply(`${anu.quotes_en}
+
+*${anu.author}*`)}
+break
+case 'quotesislami': case 'quotesislam': {
+anu = await fetchJson(`https://api.zekais.com/quoteagamis?apikey=${apikey.zekais}`)
+m.reply(anu.quotes)}
+break
+case 'quotespic': case 'quotesimg': {
+hisoka.sendMessage(m.chat, { image: { url: `https://api.zekais.com/quotepic?apikey=${apikey.harkey}` }, caption: mess.succ }, { quoted: m })}
+break
+case 'qrcode': case 'qr': {
+if (args.length < 2) return reply(`Kirim perintah ${command} Text\nContoh : ${command} gwibu`)
+m.reply(mess.wait)
+hisoka.sendMessage(from, {caption: `*QR CODE*`, image: {url: `https://tyz-api.herokuapp.com/other/qrcode?text=${q}`}}, {quoted: m})
+}
 break
 case 'qrcode': case 'qr': {
 if (args.length < 2) return reply(`Kirim perintah ${command} Text\nContoh : ${command} gwibu`)
@@ -2650,15 +3051,8 @@ ${cpus.map((cpu, i) => `${i + 1}. ${cpu.model.trim()} (${cpu.speed} MHZ)\n${Obje
 m.reply(respon)
 }
 break
-case 'owner': case 'creator': {
-let vcard = 'BEGIN:VCARD\n' 
-+ 'VERSION:3.0\n' 
-+ 'N:;KunzxD;;;'
-+ 'FN:Owner Kid\n'
-+ 'ORG:KunzxD;\n'
-+ 'TEL;type=CELL;type=VOICE;waid=6287778886786:+6287778886786\n'
-+ 'END:VCARD'
-hisoka.sendMessage(m.chat, { contacts: { displayName: 'KunzxD', contacts: [{ vcard }] } }, { quoted: m })
+case 'owner': case 'creator': case 'dev': {
+hisoka.sendContact(m.chat, global.owner, m)
 }
 break
 case 'twtdl': case 'twt': case 'twitterdl': case 'twitter': {
@@ -2765,7 +3159,7 @@ txt += `*Format :* *${data.medias[3].extension}*\n`
 txt += `*Quality :* *${data.medias[3].quality}*\n`
 txt += `*Size :* *${data.medias[3].formattedSize}*\n`
 sendFileFromUrl(m.chat, data.thumbnail, txt, m)
-hisoka.sendMessage(m.chat, { audio: { url: `${data.medias[0].url}` }, caption: `${mess.succ}` }, { quoted: m})
+hisoka.sendMessage(m.chat, { audio: { url: `${data.medias[0].url}` }, caption: mess.succ }, { quoted: m})
 })}
 break
 case 'tiktokwm': case 'tiktok': {
@@ -2779,7 +3173,7 @@ txt += `*Format :* *${data.medias[0].extension}*\n`
 txt += `*Quality :* *${data.medias[0].quality}*\n`
 txt += `*Size :* *${data.medias[0].formattedSize}*\n`
 sendFileFromUrl(m.chat, data.thumbnail, txt, m)
-hisoka.sendMessage(m.chat, { video: { url: `${data.medias[0].url}` }, caption: `${mess.succ}` }, { quoted: m})
+hisoka.sendMessage(m.chat, { video: { url: `${data.medias[0].url}` }, caption: mess.succ }, { quoted: m})
 })}
 break
 case 'tiktoknowm': {
@@ -2793,16 +3187,41 @@ txt += `*Format :* *${data.medias[2].extension}*\n`
 txt += `*Quality :* *${data.medias[2].quality}*\n`
 txt += `*Size :* *${data.medias[2].formattedSize}*\n`
 sendFileFromUrl(m.chat, data.thumbnail, txt, m)
-hisoka.sendMessage(m.chat, { video: { url: `${data.medias[0].url}` }, caption: `${mess.succ}` }, { quoted: m})
+hisoka.sendMessage(m.chat, { video: { url: `${data.medias[0].url}` }, caption: mess.succ }, { quoted: m})
 })}
+break
+case 'cocofun': case 'coco': {
+if (!q) throw mess.q
+if (!q.includes('coco')) throw mess.wrongFormat
+anu = await fetchJson(`https://api-xcoders.xyz/api/download/cocofun?url=${q}&apikey=${apikey.xkey}`)
+let txt = `*----「COCOFUN-DOWNLOADER 」----*\n\n`
+txt += `*Title :* *${anu.result.title}*\n`
+txt += `*Like :* *${anu.result.like}*\n`
+txt += `*Shared :* *${anu.result.shared}*\n`
+txt += `*Quality :* *${anu.resul.resolution}*\n`
+txt += `*Desc :* *${anu.result.desc}*\n`
+sendFileFromUrl(m.chat, anu.result.thumbnail, txt, m)
+hisoka.sendMessage(m.chat, { video: { url: `${anu.result.url}` }, caption: mess.succ }, { quoted: m})}
+break
+case 'xnxx': case 'xnx': {
+if (!q) throw mess.q
+if (!q.includes('xnxx')) throw mess.wrongFormat
+anu = await fetchJson(`https://api-xcoders.xyz/api/download/xnxx?url=${q}&apikey=${apikey.xkey}`)
+let txt = `*----「XNXX-DOWNLOADER 」----*\n\n`
+txt += `*Title :* *${anu.result.title}*\n`
+txt += `*Views :* *${anu.result.views}*\n`
+txt += `*Quality :* *${anu.resul.quality}*\n`
+txt += `*Keyword :* *${anu.result.keyword}*\n`
+sendFileFromUrl(m.chat, anu.result.thumb, txt, m)
+hisoka.sendMessage(m.chat, { video: { url: `${anu.result.url}` }, caption: mess.succ }, { quoted: m})}
 break
 case 'setcmd': {
 if (!m.quoted) throw 'Reply Pesan!'
 if (!m.quoted.fileSha256) throw 'SHA256 Hash Missing'
 if (!text) throw `Untuk Command Apa?`
 let hash = m.quoted.fileSha256.toString('base64')
-if (global.db.sticker[hash] && global.db.sticker[hash].locked) throw 'You have no permission to change this sticker command'
-global.db.sticker[hash] = {
+if (global.db.data.sticker[hash] && global.db.data.sticker[hash].locked) throw 'You have no permission to change this sticker command'
+global.db.data.sticker[hash] = {
 text,
 mentionedJid: m.mentionedJid,
 creator: m.sender,
@@ -2815,8 +3234,8 @@ break
 case 'delcmd': {
 let hash = m.quoted.fileSha256.toString('base64')
 if (!hash) throw `Tidak ada hash`
-if (global.db.sticker[hash] && global.db.sticker[hash].locked) throw 'You have no permission to delete this sticker command'
-delete global.db.sticker[hash]
+if (global.db.data.sticker[hash] && global.db.data.sticker[hash].locked) throw 'You have no permission to delete this sticker command'
+delete global.db.data.sticker[hash]
 m.reply(`Done!`)
 }
 break
@@ -2824,9 +3243,37 @@ case 'listcmd': {
 let teks = `
 *List Hash*
 Info: *bold* hash is Locked
-${Object.entries(global.db.sticker).map(([key, value], index) => `${index + 1}. ${value.locked ? `*${key}*` : key} : ${value.text}`).join('\n')}
+${Object.entries(global.db.data.sticker).map(([key, value], index) => `${index + 1}. ${value.locked ? `*${key}*` : key} : ${value.text}`).join('\n')}
 `.trim()
-hisoka.sendText(m.chat, teks, m, { mentions: Object.values(global.db.sticker).map(x => x.mentionedJid).reduce((a,b) => [...a, ...b], []) })
+hisoka.sendText(m.chat, teks, m, { mentions: Object.values(global.db.data.sticker).map(x => x.mentionedJid).reduce((a,b) => [...a, ...b], []) })
+}
+break
+case 'tobecontinue': case 'wasted': case 'wanted': case 'triggered': case 'greyscale': case 'jail': case 'darkness': case 'delete': case 'invert': case 'joke': case 'sepia': case 'blur': case 'circle': case 'fuse': case 'gay': case 'facepalm': case 'beautiful': case 'trash': case 'scary': case 'rejected': case 'brazzers': case 'ps4': case 'distort': case 'moustache': case 'frame': case 'emboss': case 'missionpassed': case 'spongebob': case 'discordhouse': case 'karenhave': case 'thanos': case 'approved': case 'burn': case 'challenger': case 'crush': case 'dictator': case 'vs': case 'toonify': case 'iphonex': case 'animeface': case 'stickbug': case 'badut2': case 'badut3': {
+if (!quoted) throw 'Reply Image'
+m.reply(mess.wait)
+let media = await hisoka.downloadAndSaveMediaMessage(quoted)
+if (/image/.test(mime)) {
+let anu = await TelegraPh(media)
+hisoka.sendMessage(m.chat, { image: { url: `https://api-xcoders.xyz/api/maker/${command}?url=${util.format(anu)}&apikey=${apikey.xkey}` }, caption: mess.succ }, { quoted: m })
+} else if (!/image/.test(mime)) {
+let anu = await UploadFileUgu(media)
+hisoka.sendMessage(m.chat, { image: { url: `https://api-xcoders.xyz/api/maker/${command}?url=${util.format(anu)}&apikey=${apikey.xkey}` }, caption: mess.succ }, { quoted: m })
+}
+await fs.unlinkSync(media)
+}
+break
+case 'toilet': case 'place': case 'burning': case 'shattered': case 'mirrors': case 'anaglyph': case 'iphone': case 'flame': case 'frame': case 'memory': case 'nature': case 'ripped': case 'tearing': case 'exposure': {
+if (!quoted) throw 'Reply Image'
+m.reply(mess.wait)
+let media = await hisoka.downloadAndSaveMediaMessage(quoted)
+if (/image/.test(mime)) {
+let anu = await TelegraPh(media)
+hisoka.sendMessage(m.chat, { image: { url: `https://api-xcoders.xyz/api/photooxy/${command}?url=${util.format(anu)}&apikey=${apikey.xkey}` }, caption: mess.succ }, { quoted: m })
+} else if (!/image/.test(mime)) {
+let anu = await UploadFileUgu(media)
+hisoka.sendMessage(m.chat, { image: { url: `https://api-xcoders.xyz/api/photooxy/${command}?url=${util.format(anu)}&apikey=${apikey.xkey}` }, caption: mess.succ }, { quoted: m })
+}
+await fs.unlinkSync(media)
 }
 break
 case 'sertitolol': case 'sertifikattolol': {
@@ -2850,17 +3297,25 @@ anu = await getBuffer(`https://api.zeks.me/api/gplaybutton?apikey=${apikey.zeksk
 hisoka.sendMessage(from, {image: anu, caption: mess.succ}, {quoted:m})
 }
 break
-case 'hartatahta': case 'naruto': case 'matrix': case 'breakwall': case 'dropwater': case 'wolflogo': case 'watercolour': {
+case 'hartatahta': case 'matrix': case 'breakwall': case 'dropwater': case 'wolflogo': case 'watercolour': {
 if (!q) throw mess.q
 m.reply(mess.wait)
 anu = await getBuffer(`https://api.zeks.me/api/${command}?apikey=${apikey.zekskey}&text=${q}`)
 hisoka.sendMessage(from, {image: anu, caption: mess.succ}, {quoted:m})
 }
 break
-case 'shadow': case 'romantic': case 'smoke': case 'burnpapper': case 'lovemsg': case 'grassmsg': case 'lovetext': case 'coffecup': case 'butterfly': case 'harrypotter': case 'retrolol': {
+case 'coffee': case 'quotewood': case 'flaming': case 'oceansea': case 'pubg': case 'shadow': case 'rainbow': case 'gravity': case 'burnpaper': case 'smoke': case 'romantic': case 'naruto': case 'lovemessage': {
 if (!q) throw mess.q
 m.reply(mess.wait)
-hisoka.sendMessage(m.chat, { image: { url: `https://zenzapi.xyz/photooxy/${command}?text=${q}&apikey=${apikey.zenzkey}` }, caption: mess.succ }, { quoted: m })
+hisoka.sendMessage(m.chat, { image: { url: `https://api-xcoders.xyz/api/photooxy/${command}?text=${q}&apikey=${apikey.xkey}` }, caption: mess.succ }, { quoted: m })
+}
+break
+case 'grass': case 'doubleheart': case 'coffecup': case 'lovetext': case 'butterfly': case 'slidetext': {
+if (!q.includes('|')) return reply(`Kirim perintah *${prefix + command}* kunz|kid`)
+var teks1 = q.split('|')[0] ? q.split('|')[0] : ''
+var teks2 = q.split('|')[1] ? q.split('|')[1] : ''
+m.reply(mess.wait)
+hisoka.sendMessage(m.chat, { image: { url: `https://api.xteam.xyz/textpro/${command}?text=${teks1}&text2=${teks2}&APIKEY=${apikey.xtkey}` }, caption: mess.succ }, { quoted: m})
 }
 break
 case 'nulis': case 'tulis': {
@@ -2870,22 +3325,110 @@ anu = await getBuffer(`https://api.zeks.me/api/nulis?apikey=${apikey.zekskey}&te
 hisoka.sendMessage(from, {image: anu, caption: mess.succ}, {quoted:m})
 }
 break
-case 'ffcover': case 'crossfire': case 'galaxy': case 'glass': case 'neon': case 'beach': case 'blackpink': case 'igcertificate': case 'ytcertificate': {
-if (!q) throw mess.q
+case 'collage': case 'cyberpunk': case 'billboard': case 'fire': case 'rain': case 'ring': case 'cat': case 'sad': case 'cinemagraph': case 'vhs': case 'heart': case 'smoke': case 'handlefire': case 'spectrum': case 'painting': {
+if (!quoted) throw 'Reply Image'
 m.reply(mess.wait)
-hisoka.sendMessage(m.chat, { image: { url: `https://zenzapi.xyz/ephoto/${command}?text=${q}&apikey=${apikey.zenzkey}` }, caption: mess.succ }, { quoted: m })
+let media = await hisoka.downloadAndSaveMediaMessage(quoted)
+if (/image/.test(mime)) {
+let anu = await TelegraPh(media)
+hisoka.sendMessage(m.chat, { image: { url: `https://api-xcoders.xyz/api/ephoto/${command}?url=${util.format(anu)}&apikey=${apikey.xkey}` }, caption: mess.succ }, { quoted: m })
+} else if (!/image/.test(mime)) {
+let anu = await UploadFileUgu(media)
+hisoka.sendMessage(m.chat, { image: { url: `https://api-xcoders.xyz/api/ephoto/${command}?url=${util.format(anu)}&apikey=${apikey.xkey}` }, caption: mess.succ }, { quoted: m })
+}
+await fs.unlinkSync(media)
 }
 break
-case '3dchristmas': case '3ddeepsea': case 'americanflag': case '3dscifi': case '3drainbow': case '3dwaterpipe': case 'halloweenskeleton': case 'sketch': case 'bluecircuit': case 'space': case 'metallic': case 'fiction': case 'greenhorror': case 'transformer': case 'berry': case 'thunder': case 'magma': case '3dcrackedstone': case '3dneonlight': case 'impressiveglitch': case 'naturalleaves': case 'fireworksparkle': case 'matrix': case 'dropwater': case 'harrypotter': case 'foggywindow': case 'neondevils': case 'christmasholiday': case '3dgradient': case 'blackpink': case 'gluetext': {
-if (!q) throw mess.q
+case 'wood': case 'notebook': case 'pencil': case 'wposter': case 'adventure': case 'heated': case 'buoys': case 'writestatus': case 'quotestatus': {
+if (!quoted) throw 'Reply Image\nContoh ${command} kunz kid'
+if (!q.includes('|')) return reply(`Kirim perintah *${prefix + command}* kunz|kid`)
+var teks1 = q.split('|')[0] ? q.split('|')[0] : ''
+var teks2 = q.split('|')[1] ? q.split('|')[1] : ''
 m.reply(mess.wait)
-hisoka.sendMessage(m.chat, { image: { url: `https://zenzapi.xyz/textpro/${command}?text=${q}&apikey=${apikey.zenzkey}` }, caption: mess.succ }, { quoted: m})
+let media = await hisoka.downloadAndSaveMediaMessage(quoted)
+if (/image/.test(mime)) {
+let anu = await TelegraPh(media)
+hisoka.sendMessage(m.chat, { image: { url: `https://api-xcoders.xyz/api/ephoto/${command}?text=${teks1}&text2=${teks2}&apikey=${apikey.xkey}` }, caption: mess.succ }, { quoted: m })
+} else if (!/image/.test(mime)) {
+let anu = await UploadFileUgu(media)
+hisoka.sendMessage(m.chat, { image: { url: `https://api-xcoders.xyz/api/ephoto/${command}?text=${teks1}&text2=${teks2}&apikey=${apikey.xkey}` }, caption: mess.succ }, { quoted: m })
+}
+await fs.unlinkSync(media)
 }
 break
-case 'rainbow': case 'scfi': case 'blue': case 'juice': case 'purple': case 'toxic': case 'peridot': case 'metal': case 'realistic': case 'impressive': case 'cracked': case 'magma': case 'thunder': case 'berry': case 'transformer': case 'horror': case 'metallic': case 'circuit': case 'sketch': case 'halloween': {
+case 'juventus': case 'scholes': {
+if (!quoted) throw 'Reply Image\nContoh ${command} Kunz 07'
+if (!q.includes('|')) return reply(`Kirim perintah *${prefix + command}* kunz|07`)
+var teks1 = q.split('|')[0] ? q.split('|')[0] : ''
+var teks2 = q.split('|')[1] ? q.split('|')[1] : ''
+m.reply(mess.wait)
+let media = await hisoka.downloadAndSaveMediaMessage(quoted)
+if (/image/.test(mime)) {
+let anu = await TelegraPh(media)
+hisoka.sendMessage(m.chat, { image: { url: `https://api-xcoders.xyz/api/ephoto/juventus?text=${teks1}&text2=${teks2}&apikey=${apikey.xkey}` }, caption: mess.succ }, { quoted: m })
+} else if (!/image/.test(mime)) {
+let anu = await UploadFileUgu(media)
+hisoka.sendMessage(m.chat, { image: { url: `https://api-xcoders.xyz/api/ephoto/juventus?text=${teks1}&text2=${teks2}&apikey=${apikey.xkey}` }, caption: mess.succ }, { quoted: m })
+}
+await fs.unlinkSync(media)
+}
+break
+case 'television': case 'glasses': case 'blackpink': case 'neonbp': case 'coverpubg': case 'greenbrush': case 'neonblue': case 'eraser': case 'dragonfire': case 'incandescent': case 'typography': case 'letters': case 'cloth': case 'graffiti': case 'metals': case 'typography2': case 'nightstars': case 'cloud': case 'caper': case 'horror': case 'sunlight': case 'cake': case 'pig': case 'hallowen': case 'leafgraphy': case 'water': case 'crank': case 'puppy': case 'pubgavatar': case 'foggy': case 'memories': case 'glazing': case 'flower': case 'american': case 'anonymous': case 'aov': case 'ml': case 'warface': case 'tiger': case 'arrow': case 'arrow2': case 'diary': case 'artistic': case 'diaryframe': {
+if (!quoted) throw 'Reply Image\nContoh ${command} kunz'
 if (!q) throw mess.q
 m.reply(mess.wait)
-hisoka.sendMessage(m.chat, { image: { url: `https://myselfff.herokuapp.com/docs/textpro/${command}?text=${text}` }, caption: mess.succ }, { quoted: m})
+let media = await hisoka.downloadAndSaveMediaMessage(quoted)
+if (/image/.test(mime)) {
+let anu = await TelegraPh(media)
+hisoka.sendMessage(m.chat, { image: { url: `https://api-xcoders.xyz/api/ephoto/$command}?text=${q}&apikey=${apikey.xkey}` }, caption: mess.succ }, { quoted: m })
+} else if (!/image/.test(mime)) {
+let anu = await UploadFileUgu(media)
+hisoka.sendMessage(m.chat, { image: { url: `https://api-xcoders.xyz/api/ephoto/$command}?text=${q}&apikey=${apikey.xkey}` }, caption: mess.succ }, { quoted: m })
+}
+await fs.unlinkSync(media)
+}
+break
+case 'neon': case 'snowtext': case 'cloudtext': case '3dluxury': case '3dgradient': case 'blackpink': case 'realisticcloud': case 'cloudsky': case 'sandsummerbeach': case 'sandwriting': case 'sandengraved': case 'summerysandwriting': case 'balloontext': case '3dglue': case 'balloontext': case 'metaldarkgold': case 'neongalaxy': case '1917': case 'minion3d': case 'holographic3d': case 'metalpurpledual': case 'deluxesilver': case 'glossybluemetal': case 'deluxegold': case 'glossycarbon': case 'fabric': case 'happnewyearfirework': case 'newyear3d': case 'neontext': case 'metaldarkgoldeffect': case 'helloweenfire': case 'bloodontheroastedglass': case 'xmas3d': case 'jokerlogo': case 'wicker': case 'naturalleaves': case 'fireworksparkle': case 'Sparkle': case 'skeleton': case 'redfoilballon': case 'purplefoilballon': case 'pinkfoilballon': case 'greenfoilballon': case 'cyanfoilballon': case 'bluefoilballon': case 'goldfoilballon': case 'steel': case 'ultragloss': case 'denim': case 'decorategreen': case 'decoratepurple': case 'peridotstone': case 'rock': case 'lava': case 'yellowglass': case 'purpleglass': case 'orangeglass': case 'greeglass': case 'cyanglass': case 'blueglass': case 'redglass': case 'purpleshnyglass': case 'captainamerica': case 'captainamerica': case 'robotr2d2': case 'toxic': case 'rainbowequalizer': {
+if (!q) throw mess.q
+m.reply(mess.wait)
+hisoka.sendMessage(m.chat, { image: { url: `https://api.xteam.xyz/textpro/${command}?text=${q}&APIKEY=${apikey.xtkey}` }, caption: mess.succ }, { quoted: m})
+}
+break
+case 'stone': case 'ph': case '3davengers': case 'marvelstudios': case 'marvel': case 'glitch': case '3dmetalsilver': case '3dmetalrosegold': case '3dmetalgold': case '3dmetalgalaxy': case 'lionlogomascot': case 'wolflogoblackwhite': case 'wolflogogalaxy': case 'ninjalogo': case 'realisticvintage': {
+if (!q.includes('|')) return reply(`Kirim perintah *${prefix + command}* kunz|kid`)
+var teks1 = q.split('|')[0] ? q.split('|')[0] : ''
+var teks2 = q.split('|')[1] ? q.split('|')[1] : ''
+m.reply(mess.wait)
+hisoka.sendMessage(m.chat, { image: { url: `https://api.xteam.xyz/textpro/${command}?text=${teks1}&text2=${teks2}&APIKEY=${apikey.xtkey}` }, caption: mess.succ }, { quoted: m})
+}
+break
+case 'stickerly': {
+if (!q) throw mess.q
+m.reply(mess.wait)
+let media = await fetchJson(`https://api.xteam.xyz/sticker/stickerly?q=${q}&APIKEY=${apikey.xtkey}`)
+gamnya = await getBuffer(`${media.result.stickerlist[0]}`)
+let encmedia = await hisoka.sendImageAsSticker(m.chat, gamnya, m, { packname: global.packname, author: global.author })
+await fs.unlinkSync(encmedia)}
+break
+case 'ttp': {
+if (!q) throw mess.q
+m.reply(mess.wait)
+let media = await getBuffer(`https://hardianto.xyz/api/maker/${command}?text=${q}&apikey=${apikey.harkey}`)
+let encmedia = await hisoka.sendImageAsSticker(m.chat, media, m, { packname: global.packname, author: global.author })
+await fs.unlinkSync(encmedia)}
+break
+case 'shaunthesheep': {
+if (!quoted) throw 'Reply Image\nContoh ${command} kunz'
+m.reply(mess.wait)
+let media = await hisoka.downloadAndSaveMediaMessage(quoted)
+if (/image/.test(mime)) {
+let anu = await TelegraPh(media)
+hisoka.sendMessage(m.chat, { video: { url: `https://api.xteam.xyz/videomaker/${command}?url=${util.format(anu)}&APIKEY=9503ce33fdb96c1e` }, caption: mess.succ }, { quoted: m })
+} else if (!/image/.test(mime)) {
+let anu = await UploadFileUgu(media)
+hisoka.sendMessage(m.chat, { video: { url: `https://api.xteam.xyz/videomaker/${command}?url=${util.format(anu)}&APIKEY=9503ce33fdb96c1e` }, caption: mess.succ }, { quoted: m })
+}
+await fs.unlinkSync(media)
 }
 break
 case 'iqra': {
@@ -2990,7 +3533,7 @@ this.anonymous = this.anonymous ? this.anonymous : {}
 let buttons = [
 { buttonId: 'start', buttonText: { displayText: 'Start' }, type: 1 }
 ]
-hisoka.sendButtonText(m.chat, buttons, `\`\`\`Hi ${await hisoka.getName(m.sender)} Welcome To Anonymous Chat\n\nKlik Button Dibawah Ini Untuk Mencari Partner\`\`\``, `${namebot}`, m)
+hisoka.sendButtonText(m.chat, buttons, `\`\`\`Hi ${await hisoka.getName(m.sender)} Welcome To Anonymous Chat\n\nKlik Button Dibawah Ini Untuk Mencari Partner\`\`\``, namebot, m)
 }
 break
 case 'keluar': case 'leave': {
@@ -3017,7 +3560,7 @@ if (Object.values(this.anonymous).find(room => room.check(m.sender))) {
 let buttons = [
 { buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
 ]
-await hisoka.sendButtonText(m.chat, buttons, `\`\`\`Kamu Masih Berada Di dalam Sesi Anonymous, Tekan Button Dibawah Ini Untuk Menghentikan Sesi Anonymous Anda\`\`\``, `${namebot}`, m)
+await hisoka.sendButtonText(m.chat, buttons, `\`\`\`Kamu Masih Berada Di dalam Sesi Anonymous, Tekan Button Dibawah Ini Untuk Menghentikan Sesi Anonymous Anda\`\`\``, namebot, m)
 throw false
 }
 let room = Object.values(this.anonymous).find(room => room.state === 'WAITING' && !room.check(m.sender))
@@ -3026,10 +3569,10 @@ let buttons = [
 { buttonId: 'next', buttonText: { displayText: 'Skip' }, type: 1 },
 { buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
 ]
-await hisoka.sendButtonText(room.a, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, `${namebot}`, m)
+await hisoka.sendButtonText(room.a, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, namebot, m)
 room.b = m.sender
 room.state = 'CHATTING'
-await hisoka.sendButtonText(room.b, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, `${namebot}`, m)
+await hisoka.sendButtonText(room.b, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, namebot, m)
 } else {
 let id = + new Date
 this.anonymous[id] = {
@@ -3047,7 +3590,7 @@ return who === this.a ? this.b : who === this.b ? this.a : ''
 let buttons = [
 { buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
 ]
-await hisoka.sendButtonText(m.chat, buttons, `\`\`\`Mohon Tunggu Sedang Mencari Partner\`\`\``, `${namebot}`, m)
+await hisoka.sendButtonText(m.chat, buttons, `\`\`\`Mohon Tunggu Sedang Mencari Partner\`\`\``, namebot, m)
 }
 break
 }
@@ -3071,10 +3614,10 @@ let buttons = [
 { buttonId: 'next', buttonText: { displayText: 'Skip' }, type: 1 },
 { buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
 ]
-await hisoka.sendButtonText(room.a, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, `${namebot}`, m)
+await hisoka.sendButtonText(room.a, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, namebot, m)
 room.b = m.sender
 room.state = 'CHATTING'
-await hisoka.sendButtonText(room.b, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, `${namebot}`, m)
+await hisoka.sendButtonText(room.b, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, namebot, m)
 } else {
 let id = + new Date
 this.anonymous[id] = {
@@ -3092,7 +3635,7 @@ return who === this.a ? this.b : who === this.b ? this.a : ''
 let buttons = [
 { buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
 ]
-await hisoka.sendButtonText(m.chat, buttons, `\`\`\`Mohon Tunggu Sedang Mencari Partner\`\`\``, `${namebot}`, m)
+await hisoka.sendButtonText(m.chat, buttons, `\`\`\`Mohon Tunggu Sedang Mencari Partner\`\`\``, namebot, m)
 }}
 break
 case 'sendkontak': case 'sendcontact': {
@@ -3130,7 +3673,7 @@ let menst = [orang, jodoh]
 let buttons = [
 { buttonId: 'jadian', buttonText: { displayText: 'Jodohku' }, type: 1 }
 ]
-await hisoka.sendButtonText(m.chat, buttons, jawab, `${namebot}`, m, {mentions: menst})
+await hisoka.sendButtonText(m.chat, buttons, jawab, namebot, m, {mentions: menst})
 }
 break
 case 'jodohku': {
@@ -3145,7 +3688,7 @@ let ments = [me, jodoh]
 let buttons = [
 { buttonId: 'jodohku', buttonText: { displayText: 'Jodohku' }, type: 1 }
 ]
-await hisoka.sendButtonText(m.chat, buttons, jawab, `${namebot}`, m, {mentions: ments})
+await hisoka.sendButtonText(m.chat, buttons, jawab, namebot, m, {mentions: ments})
 }
 break
 case 'ttc': case 'ttt': case 'tictactoe': {
@@ -3253,7 +3796,7 @@ tebaklagu[m.sender.split('@')[0]] = result.jawaban.toLowerCase()
 await sleep(60000)
 if (tebaklagu.hasOwnProperty(m.sender.split('@')[0])) {
 console.log("Jawaban: " + result.jawaban)
-hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lagu', buttonText: { displayText: 'Tebak Lagu' }, type: 1 }], `Waktu Habis\nJawaban: ${tebaklagu[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, `${namebot}`, m)
+hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lagu', buttonText: { displayText: 'Tebak Lagu' }, type: 1 }], `Waktu Habis\nJawaban: ${tebaklagu[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, namebot, m)
 delete tebaklagu[m.sender.split('@')[0]]
 }
 } else if (args[0] === 'bendera') {
@@ -3266,7 +3809,7 @@ tebakbendera[m.sender.split('@')[0]] = result.name.toLowerCase()
 })
 await sleep(60000)
 if (tebakbendera.hasOwnProperty(m.sender.split('@')[0])) {
-hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak bendera', buttonText: { displayText: 'Tebak Bendera' }, type: 1 }], "Waktu Habis\nJawaban: " + result.name , `${namebot}`, m)
+hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak bendera', buttonText: { displayText: 'Tebak Bendera' }, type: 1 }], "Waktu Habis\nJawaban: " + result.name , namebot, m)
 delete tebakbendera[m.sender.split('@')[0]]
 }
 } else if (args[0] === 'gambar') {
@@ -3279,7 +3822,7 @@ tebakgambar[m.sender.split('@')[0]] = result.jawaban.toLowerCase()
 await sleep(60000)
 if (tebakgambar.hasOwnProperty(m.sender.split('@')[0])) {
 console.log("Jawaban: " + result.jawaban)
-hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak gambar', buttonText: { displayText: 'Tebak Gambar' }, type: 1 }], `Waktu Habis\nJawaban: ${tebakgambar[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, `${namebot}`, m)
+hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak gambar', buttonText: { displayText: 'Tebak Gambar' }, type: 1 }], `Waktu Habis\nJawaban: ${tebakgambar[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, namebot, m)
 delete tebakgambar[m.sender.split('@')[0]]
 }
 } else if (args[0] === 'kata') {
@@ -3292,7 +3835,7 @@ tebakkata[m.sender.split('@')[0]] = result.jawaban.toLowerCase()
 await sleep(60000)
 if (tebakkata.hasOwnProperty(m.sender.split('@')[0])) {
 console.log("Jawaban: " + result.jawaban)
-hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { displayText: 'Tebak Kata' }, type: 1 }], `Waktu Habis\nJawaban: ${tebakkata[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, `${namebot}`, m)
+hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { displayText: 'Tebak Kata' }, type: 1 }], `Waktu Habis\nJawaban: ${tebakkata[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, namebot, m)
 delete tebakkata[m.sender.split('@')[0]]
 }
 } else if (args[0] === 'kalimat') {
@@ -3305,7 +3848,7 @@ tebakkalimat[m.sender.split('@')[0]] = result.jawaban.toLowerCase()
 await sleep(60000)
 if (tebakkalimat.hasOwnProperty(m.sender.split('@')[0])) {
 console.log("Jawaban: " + result.jawaban)
-hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kalimat', buttonText: { displayText: 'Tebak Kalimat' }, type: 1 }], `Waktu Habis\nJawaban: ${tebakkalimat[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, `${namebot}`, m)
+hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kalimat', buttonText: { displayText: 'Tebak Kalimat' }, type: 1 }], `Waktu Habis\nJawaban: ${tebakkalimat[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, namebot, m)
 delete tebakkalimat[m.sender.split('@')[0]]
 }
 } else if (args[0] === 'lirik') {
@@ -3318,7 +3861,7 @@ tebaklirik[m.sender.split('@')[0]] = result.jawaban.toLowerCase()
 await sleep(60000)
 if (tebaklirik.hasOwnProperty(m.sender.split('@')[0])) {
 console.log("Jawaban: " + result.jawaban)
-hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lirik', buttonText: { displayText: 'Tebak Lirik' }, type: 1 }], `Waktu Habis\nJawaban: ${tebaklirik[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, `${namebot}`, m)
+hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lirik', buttonText: { displayText: 'Tebak Lirik' }, type: 1 }], `Waktu Habis\nJawaban: ${tebaklirik[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, namebot, m)
 delete tebaklirik[m.sender.split('@')[0]]
 }
 } else if (args[0] === 'lontong') {
@@ -3332,7 +3875,7 @@ caklontong_desk[m.sender.split('@')[0]] = result.deskripsi
 await sleep(60000)
 if (caklontong.hasOwnProperty(m.sender.split('@')[0])) {
 console.log("Jawaban: " + result.jawaban)
-hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lontong', buttonText: { displayText: 'Tebak Lontong' }, type: 1 }], `Waktu Habis\nJawaban: ${caklontong[m.sender.split('@')[0]]}\nDeskripsi : ${caklontong_desk[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, `${namebot}`, m)
+hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lontong', buttonText: { displayText: 'Tebak Lontong' }, type: 1 }], `Waktu Habis\nJawaban: ${caklontong[m.sender.split('@')[0]]}\nDeskripsi : ${caklontong_desk[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, namebot, m)
 delete caklontong[m.sender.split('@')[0]]
 delete caklontong_desk[m.sender.split('@')[0]]
 }
@@ -3440,7 +3983,7 @@ pp = monospace(`📍 Profile Player
  • Xp : ${getLevelingXp(sender)}/${reqXp}
  • Level : ${getLevelingLevel(sender)}
  
-🎒 Inventory :
+🎒 Inventori :
  • Uang : $${(getBalance(sender, balance))}
  • Emas : ${getEmas(sender)}
  • Besi : ${getBesi(sender)}
@@ -3471,6 +4014,7 @@ pp = monospace(`📍 Profile Player
  • miningxp
  • mancing
  • adventure
+ • tembak udara/darat/laut
  • berburu
  • menebang
  • mulung
@@ -3485,7 +4029,7 @@ pp = monospace(`📍 Profile Player
  • killdemond
  • killdemondking 
  
-🛒 Sell Inventory
+🛒 Sell Inventori
  • sellbesi <jumlah>
  • sellemas <jumlah>
  • selldiamond <jumlah>
@@ -3512,7 +4056,7 @@ templateMessage: {
  hydratedContentText: `${pp}`,
  Message: { 
  jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
- hydratedFooterText: `${namebot}`,
+ hydratedFooterText: namebot,
  hydratedButtons: [{
  urlButton: {
  displayText: 'website',
@@ -3521,7 +4065,7 @@ templateMessage: {
  },
  {
  quickReplyButton: {
- displayText: 'My Inventory',
+ displayText: 'My Inventori',
  id: '.mybag',
  }
  },
@@ -3580,7 +4124,7 @@ let buttons = [
 ]
 let button = {
 text: `${done}`,
-footer: `${namebot}`,
+footer: namebot,
 buttons: buttons,
 headerType: 2
 }
@@ -3598,7 +4142,7 @@ const dafpetualang = generateWAMessageFromContent(m.chat, proto.Message.fromObje
  hydratedContentText: capt,
  Message: { 
  jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
- hydratedFooterText: `${namebot}`,
+ hydratedFooterText: namebot,
  hydratedButtons: [{
  urlButton: {
  displayText: 'website',
@@ -3649,7 +4193,7 @@ hydratedTemplate: {
 hydratedContentText: caption,
 locationMessage: { 
 jpegThumbnail: gammoth },
-hydratedFooterText: `${namebot}`,
+hydratedFooterText: namebot,
 hydratedButtons: [ 
 {
 quickReplyButton: {
@@ -3707,7 +4251,7 @@ hydratedTemplate: {
  hydratedContentText: done,
  locationMessage: { 
  jpegThumbnail: gamning },
- hydratedFooterText: `${namebot}`,
+ hydratedFooterText: namebot,
  hydratedButtons: [ 
  {
  quickReplyButton: {
@@ -3761,7 +4305,7 @@ hydratedTemplate: {
 hydratedContentText: caption,
 locationMessage: { 
 jpegThumbnail: walbang },
-hydratedFooterText: `${namebot}`,
+hydratedFooterText: namebot,
 hydratedButtons: [ 
 {
 quickReplyButton: {
@@ -3820,7 +4364,7 @@ hydratedTemplate: {
 hydratedContentText: caption,
 locationMessage: { 
 jpegThumbnail: walruan },
-hydratedFooterText: `${namebot}`,
+hydratedFooterText: namebot,
 hydratedButtons: [ 
 {
 quickReplyButton: {
@@ -3899,7 +4443,7 @@ hydratedTemplate: {
 hydratedContentText: caption,
 locationMessage: { 
 jpegThumbnail: walruan },
-hydratedFooterText: `${namebot}`,
+hydratedFooterText: namebot,
 hydratedButtons: [ 
 {
 quickReplyButton: {
@@ -3978,7 +4522,7 @@ but = [
 { buttonId: `!myinventori`, buttonText: { displayText: 'Inventori' }, type: 1 }]
 let buttoncekinvenyory = {
 text: `${caption}`,
-footer: `${namebot}`,
+footer: namebot,
 buttons: but,
 headerType: 2
 }
@@ -3996,6 +4540,54 @@ hisoka.sendText(m.chat, `${pushname} sedang bertualang`)
 addLevelingXp(sender, adven)
 addBalance(sender, money, balance)}
 break
+case 'tembak': {
+const adven = Math.ceil(Math.random() * 1000)
+const money = Math.ceil(Math.random() * 300)						
+if (args[0] == 'udara') {
+setTimeout( () => {
+reply(`[ *PERINTAH DILAKSANAKAN* ]`)
+}, 1000)
+setTimeout( () => {
+reply(`[ *SEDANG BERBURU* ]`)
+}, 5000)
+setTimeout( () => {
+reply(`[ *SUKSES !! DAN ANDA MENDAPATKAN* ]`)
+}, 8000)
+setTimeout( () => {
+reply(`[ *WOW ANDA MENDAPATKAN* ]\n[ *${buruh33}* ]`)
+}, 12000)
+}
+if (args[0] == 'darat') {
+setTimeout( () => {
+reply(`[ *PERINTAH DILAKSANAKAN* ]`)
+}, 1000)
+setTimeout( () => {
+reply(`[ *SEDANG BERBURU* ]`)
+}, 5000)
+setTimeout( () => {
+reply(`[ *SUKSES !! DAN ANDA MENDAPATKAN* ]`)
+}, 8000)
+setTimeout( () => {
+reply(`[ *WOW ANDA MENDAPATKAN* ]\n[ *${buruh22}* ]`)
+}, 12000)
+}
+if (args[0] == 'laut') {
+setTimeout( () => {
+reply(`[ *PERINTAH DILAKSANAKAN* ]`)
+}, 1000)
+setTimeout( () => {
+reply(`[ *SEDANG BERBURU* ]`)
+}, 5000)
+setTimeout( () => {
+reply(`[ *SUKSES !! DAN ANDA MENDAPATKAN* ]`)
+}, 8000)
+setTimeout( () => {
+reply(`[ *WOW ANDA MENDAPATKAN* ]\n[ *${buruh11}* ]`)
+}, 12000)
+}
+addLevelingXp(sender, adven)
+addBalance(sender, money, balance)}
+break
 case 'sellhewan': case 'jualhewan': {
 if (!isPetualang) return hisoka.sendMessage(m.chat, buttonpetualang, { quoted: m })
 if (!args[0]) throw `1. monyet\n2. gorilla\n3. \n4. harimau\n5. macan\n6. kuda\n7. zebra\n8. rusa\n9. kerbau\n10. aapi\n11.babi\n12. garuda\n13. domba\n14. kelelawar\n15. ikan\n\nContoh penggunaan:\n${prefix + command} domba 12`
@@ -4008,7 +4600,7 @@ sellMonyet(sender, jmlh, balance)
 addBalance(sender, rp, balance) 
 capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin\n • Harga/${args[0]} : ${args[1]}\n • Status : Sukses\n • Sisa${args[0]} : ${getMonyet(sender)}\n • Hasil Penjualan : $${rp}`)
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
-let buttoncekinvenyori = { text: `${capti}`, footer: `${namebot}`, buttons: but, headerType: 2 }
+let buttoncekinvenyori = { text: `${capti}`, footer: namebot, buttons: but, headerType: 2 }
 hisoka.sendMessage(m.chat, buttoncekinvenyori, { quoted: m })
 } else if (args[0] === 'gorilla') {
 if (getGorilla(sender) < jmlh) return m.reply(`Besi Kamu Tidak Cukup`)
@@ -4016,7 +4608,7 @@ sellGorilla(sender, jmlh, balance)
 addBalance(sender, rp, balance) 
 capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin\n • Harga/${args[0]} : ${args[1]}\n • Status : Sukses\n • Sisa${args[0]} : ${getMonyet(sender)}\n • Hasil Penjualan : $${rp}`)
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
-let buttoncekinvenyori = { text: `${capti}`, footer: `${namebot}`, buttons: but, headerType: 2 }
+let buttoncekinvenyori = { text: `${capti}`, footer: namebot, buttons: but, headerType: 2 }
 hisoka.sendMessage(m.chat, buttoncekinvenyori, { quoted: m })
 } else if (args[0] === 'harimau') {
 if (getHarimau(sender) < jmlh) return m.reply(`${args[0]} Kamu Tidak Cukup`)
@@ -4024,7 +4616,7 @@ sellHarimau(sender, jmlh, balance)
 addBalance(sender, rp, balance) 
 capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin\n • Harga/${args[0]} : ${args[1]}\n • Status : Sukses\n • Sisa${args[0]} : ${getHarimau(sender)}\n • Hasil Penjualan : $${rp}`)
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
-let buttoncekinvenyori = { text: `${capti}`, footer: `${namebot}`, buttons: but, headerType: 2 }
+let buttoncekinvenyori = { text: `${capti}`, footer: namebot, buttons: but, headerType: 2 }
 hisoka.sendMessage(m.chat, buttoncekinvenyori, { quoted: m })
 } else if (args[0] === 'macan') {
 if (getMacan(sender) < jmlh) return m.reply(`${args[0]} Kamu Tidak Cukup`)
@@ -4032,7 +4624,7 @@ sellMacan(sender, jmlh, balance)
 addBalance(sender, rp, balance) 
 capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin\n • Harga/${args[0]} : ${args[1]}\n • Status : Sukses\n • Sisa${args[0]} : ${getMacan(sender)}\n • Hasil Penjualan : $${rp}`)
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
-let buttoncekinvenyori = { text: `${capti}`, footer: `${namebot}`, buttons: but, headerType: 2 }
+let buttoncekinvenyori = { text: `${capti}`, footer: namebot, buttons: but, headerType: 2 }
 hisoka.sendMessage(m.chat, buttoncekinvenyori, { quoted: m })
 } else if (args[0] === 'kuda') {
 if (getKuda(sender) < jmlh) return m.reply(`${args[0]} Kamu Tidak Cukup`)
@@ -4040,7 +4632,7 @@ sellKuda(sender, jmlh, balance)
 addBalance(sender, rp, balance) 
 capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin\n • Harga/${args[0]} : ${args[1]}\n • Status : Sukses\n • Sisa${args[0]} : ${getKuda(sender)}\n • Hasil Penjualan : $${rp}`)
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
-let buttoncekinvenyori = { text: `${capti}`, footer: `${namebot}`, buttons: but, headerType: 2 }
+let buttoncekinvenyori = { text: `${capti}`, footer: namebot, buttons: but, headerType: 2 }
 hisoka.sendMessage(m.chat, buttoncekinvenyori, { quoted: m })
 } else if (args[0] === 'zebra') {
 if (getZebra(sender) < jmlh) return m.reply(`${args[0]} Kamu Tidak Cukup`)
@@ -4048,7 +4640,7 @@ sellZebra(sender, jmlh, balance)
 addBalance(sender, rp, balance) 
 capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin\n • Harga/${args[0]} : ${args[1]}\n • Status : Sukses\n • Sisa${args[0]} : ${getZebra(sender)}\n • Hasil Penjualan : $${rp}`)
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
-let buttoncekinvenyori = { text: `${capti}`, footer: `${namebot}`, buttons: but, headerType: 2 }
+let buttoncekinvenyori = { text: `${capti}`, footer: namebot, buttons: but, headerType: 2 }
 hisoka.sendMessage(m.chat, buttoncekinvenyori, { quoted: m })
 } else if (args[0] === 'rusa') {
 if (getRusa(sender) < jmlh) return m.reply(`${args[0]} Kamu Tidak Cukup`)
@@ -4056,7 +4648,7 @@ sellRusa(sender, jmlh, balance)
 addBalance(sender, rp, balance) 
 capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin\n • Harga/${args[0]} : ${args[1]}\n • Status : Sukses\n • Sisa${args[0]} : ${getRusa(sender)}\n • Hasil Penjualan : $${rp}`)
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
-let buttoncekinvenyori = { text: `${capti}`, footer: `${namebot}`, buttons: but, headerType: 2 }
+let buttoncekinvenyori = { text: `${capti}`, footer: namebot, buttons: but, headerType: 2 }
 hisoka.sendMessage(m.chat, buttoncekinvenyori, { quoted: m })
 } else if (args[0] === 'kerbau') {
 if (getKuda(sender) < jmlh) return m.reply(`${args[0]} Kamu Tidak Cukup`)
@@ -4064,7 +4656,7 @@ sellKuda(sender, jmlh, balance)
 addBalance(sender, rp, balance) 
 capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin\n • Harga/${args[0]} : ${args[1]}\n • Status : Sukses\n • Sisa${args[0]} : ${getKuda(sender)}\n • Hasil Penjualan : $${rp}`)
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
-let buttoncekinvenyori = { text: `${capti}`, footer: `${namebot}`, buttons: but, headerType: 2 }
+let buttoncekinvenyori = { text: `${capti}`, footer: namebot, buttons: but, headerType: 2 }
 hisoka.sendMessage(m.chat, buttoncekinvenyori, { quoted: m })
 } else if (args[0] === 'sapi') {
 if (getSapi(sender) < jmlh) return m.reply(`${args[0]} Kamu Tidak Cukup`)
@@ -4072,7 +4664,7 @@ sellSapi(sender, jmlh, balance)
 addBalance(sender, rp, balance) 
 capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin\n • Harga/${args[0]} : ${args[1]}\n • Status : Sukses\n • Sisa${args[0]} : ${getSapi(sender)}\n • Hasil Penjualan : $${rp}`)
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
-let buttoncekinvenyori = { text: `${capti}`, footer: `${namebot}`, buttons: but, headerType: 2 }
+let buttoncekinvenyori = { text: `${capti}`, footer: namebot, buttons: but, headerType: 2 }
 hisoka.sendMessage(m.chat, buttoncekinvenyori, { quoted: m })
 } else if (args[0] === 'babi') {
 if (getBabi(sender) < jmlh) return m.reply(`${args[0]} Kamu Tidak Cukup`)
@@ -4080,7 +4672,7 @@ sellBabi(sender, jmlh, balance)
 addBalance(sender, rp, balance) 
 capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin\n • Harga/${args[0]} : ${args[1]}\n • Status : Sukses\n • Sisa${args[0]} : ${getBabi(sender)}\n • Hasil Penjualan : $${rp}`)
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
-let buttoncekinvenyori = { text: `${capti}`, footer: `${namebot}`, buttons: but, headerType: 2 }
+let buttoncekinvenyori = { text: `${capti}`, footer: namebot, buttons: but, headerType: 2 }
 hisoka.sendMessage(m.chat, buttoncekinvenyori, { quoted: m })
 } else if (args[0] === 'garuda') {
 if (getGaruda(sender) < jmlh) return m.reply(`${args[0]} Kamu Tidak Cukup`)
@@ -4088,7 +4680,7 @@ sellGaruda(sender, jmlh, balance)
 addBalance(sender, rp, balance) 
 capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin\n • Harga/${args[0]} : ${args[1]}\n • Status : Sukses\n • Sisa${args[0]} : ${getGaruda(sender)}\n • Hasil Penjualan : $${rp}`)
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
-let buttoncekinvenyori = { text: `${capti}`, footer: `${namebot}`, buttons: but, headerType: 2 }
+let buttoncekinvenyori = { text: `${capti}`, footer: namebot, buttons: but, headerType: 2 }
 hisoka.sendMessage(m.chat, buttoncekinvenyori, { quoted: m })
 } else if (args[0] === 'domba') {
 if (getDomba(sender) < jmlh) return m.reply(`${args[0]} Kamu Tidak Cukup`)
@@ -4096,7 +4688,7 @@ sellDomba(sender, jmlh, balance)
 addBalance(sender, rp, balance) 
 capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin\n • Harga/${args[0]} : ${args[1]}\n • Status : Sukses\n • Sisa${args[0]} : ${getDomba(sender)}\n • Hasil Penjualan : $${rp}`)
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
-let buttoncekinvenyori = { text: `${capti}`, footer: `${namebot}`, buttons: but, headerType: 2 }
+let buttoncekinvenyori = { text: `${capti}`, footer: namebot, buttons: but, headerType: 2 }
 hisoka.sendMessage(m.chat, buttoncekinvenyori, { quoted: m })
 } else if (args[0] === 'kelelawar') {
 if (getKelelawar(sender) < jmlh) return m.reply(`${args[0]} Kamu Tidak Cukup`)
@@ -4104,7 +4696,7 @@ sellKelelawar(sender, jmlh, balance)
 addBalance(sender, rp, balance) 
 capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin\n • Harga/${args[0]} : ${args[1]}\n • Status : Sukses\n • Sisa${args[0]} : ${getKelelawar(sender)}\n • Hasil Penjualan : $${rp}`)
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
-let buttoncekinvenyori = { text: `${capti}`, footer: `${namebot}`, buttons: but, headerType: 2 }
+let buttoncekinvenyori = { text: `${capti}`, footer: namebot, buttons: but, headerType: 2 }
 hisoka.sendMessage(m.chat, buttoncekinvenyori, { quoted: m })
 } else if (args[0] === 'ikan') {
 if (getIkan(sender) < jmlh) return m.reply(`${args[0]} Kamu Tidak Cukup`)
@@ -4112,7 +4704,7 @@ sellIkan(sender, jmlh, balance)
 addBalance(sender, rp, balance) 
 capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin\n • Harga/${args[0]} : ${args[1]}\n • Status : Sukses\n • Sisa${args[0]} : ${getIkan(sender)}\n • Hasil Penjualan : $${rp}`)
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
-let buttoncekinvenyori = { text: `${capti}`, footer: `${namebot}`, buttons: but, headerType: 2 }
+let buttoncekinvenyori = { text: `${capti}`, footer: namebot, buttons: but, headerType: 2 }
 hisoka.sendMessage(m.chat, buttoncekinvenyori, { quoted: m })
 }}
 break
@@ -4128,7 +4720,7 @@ capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
 let buttoncekinvenyori = {
 text: `${capti}`,
-footer: `${namebot}`,
+footer: namebot,
 buttons: but,
 headerType: 2
 }
@@ -4146,7 +4738,7 @@ capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
 let buttoncekinvenyoryi = {
 text: `${capti}`,
-footer: `${namebot}`,
+footer: namebot,
 buttons: but,
 headerType: 2
 }
@@ -4164,7 +4756,7 @@ capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
 let buttoncekinvenyoryy = {
 text: `${capti}`,
-footer: `${namebot}`,
+footer: namebot,
 buttons: but,
 headerType: 2
 }
@@ -4182,7 +4774,7 @@ capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
 let buttoncekinvenyoryy = {
 text: `${capti}`,
-footer: `${namebot}`,
+footer: namebot,
 buttons: but,
 headerType: 2
 }
@@ -4200,7 +4792,7 @@ capti = monospace(`🛒*Pasar*\n • Penjual : ${pushname}\n • Pembeli : Admin
 but = [{ buttonId: '!myinventori', buttonText: { displayText: 'Cek Inventori' }, type: 1 }]
 let buttoncekinvenyoryy = {
 text: `${capti}`,
-footer: `${namebot}`,
+footer: namebot,
 buttons: but,
 headerType: 2
 }
@@ -4242,7 +4834,7 @@ hydratedTemplate: {
  hydratedContentText: done,
  locationMessage: { 
  jpegThumbnail: limethumb },
- hydratedFooterText: `${namebot}`,
+ hydratedFooterText: namebot,
  hydratedButtons: [ 
  {
  quickReplyButton: {
@@ -4293,7 +4885,7 @@ hydratedTemplate: {
  hydratedContentText: done,
  locationMessage: { 
  jpegThumbnail: blinthumb },
- hydratedFooterText: `${namebot}`,
+ hydratedFooterText: namebot,
  hydratedButtons: [ 
  {
  quickReplyButton: {
@@ -4344,7 +4936,7 @@ hydratedTemplate: {
  hydratedContentText: done,
  locationMessage: { 
  jpegThumbnail: vilthumb },
- hydratedFooterText: `${namebot}`,
+ hydratedFooterText: namebot,
  hydratedButtons: [ 
  {
  quickReplyButton: {
@@ -4395,7 +4987,7 @@ hydratedTemplate: {
  hydratedContentText: done,
  locationMessage: { 
  jpegThumbnail: mothumb },
- hydratedFooterText: `${namebot}`,
+ hydratedFooterText: namebot,
  hydratedButtons: [ 
  {
  quickReplyButton: {
@@ -4446,7 +5038,7 @@ hydratedTemplate: {
  hydratedContentText: done,
  locationMessage: { 
  jpegThumbnail: monthumb },
- hydratedFooterText: `${namebot}`,
+ hydratedFooterText: namebot,
  hydratedButtons: [ 
  {
  quickReplyButton: {
@@ -4497,7 +5089,7 @@ hydratedTemplate: {
  hydratedContentText: done,
  locationMessage: { 
  jpegThumbnail: kingthumb },
- hydratedFooterText: `${namebot}`,
+ hydratedFooterText: namebot,
  hydratedButtons: [ 
  {
  quickReplyButton: {
@@ -4603,7 +5195,7 @@ id: `${prefix}sc`
 }]
 fatihgans = fs.readFileSync('./lib/hisoka.jpg')
 let txt = `「 Broadcast Bot 」\n\n${text}`
-hisoka.send5ButImg(yoi, txt, `${namebot}`, fatihgans, btn)
+hisoka.send5ButImg(yoi, txt, namebot, fatihgans, btn)
 }
 m.reply('Sukses Broadcast')
 }
@@ -4701,7 +5293,7 @@ id: `${prefix}sc`
 }]
 fatihgans = fs.readFileSync('./lib/hisoka.jpg')
 let txt = `「 Broadcast Bot 」\n\n${text}`
-hisoka.send5ButImg(i, txt, `${namebot}`, fatihgans, btn)
+hisoka.send5ButImg(i, txt, namebot, fatihgans, btn)
 }
 m.reply(`Sukses Mengirim Broadcast Ke ${anu.length} Group`)
 }
@@ -4808,7 +5400,7 @@ if (stdout) return m.reply(stdout)
 }
 }
 } catch (err) {
-hisoka.sendText(m.chat, err, m)
+m.reply(util.format(err))
 }
 }
 

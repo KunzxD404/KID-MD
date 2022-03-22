@@ -6,15 +6,13 @@ WhatsApp Bot Multi Device
 </p>
 <h1 align="center">Kaito-Kid</h1>
 
-If An Error Occurs, Open The Issue
-This is WhatsApp multi device, working with [`@adiwajshing/baileys`](https://github.com/adiwajshing/baileys/)
+This is WhatsApp multi device, working with [`@adiwajshing/baileys-md`](https://github.com/adiwajshing/baileys/tree/multi-device)
 
 ## UNTUK PENGGUNA WINDOWS/RDP
 
 * Unduh & Instal Git [`Klik Disini`](https://git-scm.com/downloads)
 * Unduh & Instal NodeJS [`Klik Disini`](https://nodejs.org/en/download)
-* Unduh & Instal FFmpeg [`Klik Disini`](https://ffmpeg.org/download.html) (**Jangan Lupa Tambahkan FFmpeg ke variabel lingkungan PATH**)
-
+* Unduh & Instal FFmpeg [`Klik Disini`](https://ffmpeg.org/download.html)`](**Jangan Lupa Tambahkan FFmpeg ke variabel lingkungan PATH**)
 
 ```bash
 git clone https://github.com/KunzxD404/kid-md
@@ -22,6 +20,12 @@ cd kid
 npm install
 ```
 
+## HOW TO CONNECT TO MONGODB WHEN RUN IN HEROKU
+
+* Create account and database in mongodb atlas [`watch here`](https://youtu.be/rPqRyYJmx2g)
+* when you already have a database, you just need to take mongourl
+* Put mongourl in Procfile `web: node . --db 'mongourl'`
+* Example `web: node . -- db 'Your Mongo URI'`
 
 ## FOR TERMUX/UBUNTU/SSH USER
 
@@ -40,23 +44,25 @@ npm install
 $ node .
 ```
 
-## IF ERROR INSTALL MODULE FOR TERMUX
-
-```bash
-pkg install yarn
-yarn
-```
-
 ## ❗ Warning
 WhatsApp bot is still in the development stage, so there are a few bugs
-WhatsApp Connection (BETA, not working perfectly)
+WhatsApp Connection`](BETA, not working perfectly)
 
 ## Thanks To
-* [`@adiwajshing/baileys`](https://github.com/adiwajshing/baileys)
+* [`@adiwajshing/baileys-md`](https://github.com/adiwajshing/baileys/tree/multi-device)
 * [`Nurutomo`](https://github.com/Nurutomo)
 * [`Mhankbarbar`](https://github.com/MhankBarBar)
 * [`DikaArdnt/Hisoka-Morou`](https://github.com/DikaArdnt/Hisoka-Morou)
-* [`Febriansyah`](https://github.com/febzofc)
-* [`Dan Penyedia Apikeyweb(ada di case tqtq)`](https://github.com/kunzxd404)
+* [`Febz`](github.com/febzofc)
+
+## Penyedia Api
+* [`Zeks`](zeks.me)
+* [`Anto`](hardianto.xyz)
+* [`Rimuru`](myselfff.herokuapp.com)
+* [`Farhan`](api-xcoders.xyz)
+* [`Nurutomo`](api.xteam.xyz)
+* [`Zekais`](api.zekais.com)
+* [`Xfar`](https://github.com/xfar05/xfarr-api)
+* [`Hxz`](https://github.com/Hexagonz/Hexa-Api)
 
 License: [MIT](https://en.wikipedia.org/wiki/MIT_License)

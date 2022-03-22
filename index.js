@@ -4,17 +4,52 @@ const { state, saveState } = useSingleFileAuthState(`./${sessionName}.json`)
 const pino = require('pino')
 const { Boom } = require('@hapi/boom')
 const fs = require('fs')
+const yargs = require('yargs/yargs')
 const chalk = require('chalk')
 const FileType = require('file-type')
 const path = require('path')
 const PhoneNumber = require('awesome-phonenumber')
 const { imageToWebp, videoToWebp, writeExifImg, writeExifVid } = require('./lib/exif')
 const { smsg, isUrl, generateMessageTag, getBuffer, getSizeMedia, fetchJson, await, sleep } = require('./lib/myfunc')
+
+var low
+try {
+  low = require('lowdb')
+} catch (e) {
+  low = require('./lib/lowdb')
+}
+
+const { Low, JSONFile } = low
+const mongoDB = require('./lib/mongoDB')
+
 global.api = (name, path = '/', query = {}, apikeyqueryname) => (name in global.APIs ? global.APIs[name] : name) + path + (query || apikeyqueryname ? '?' + new URLSearchParams(Object.entries({ ...query, ...(apikeyqueryname ? { [apikeyqueryname]: global.APIKeys[name in global.APIs ? global.APIs[name] : name] } : {}) })) : '')
+
 const store = makeInMemoryStore({ logger: pino().child({ level: 'silent', stream: 'store' }) })
 
+global.opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse())
+global.db = new Low(
+  /https?:\/\//.test(opts['db'] || '') ?
+new cloudDBAdapter(opts['db']) : /mongodb/.test(opts['db']) ?
+  new mongoDB(opts['db']) :
+  new JSONFile(`dataB/database.json`)
+)
+global.db.data = {
+users: {},
+chats: {},
+sticker: {},
+database: {},
+game: {},
+settings: {},
+others: {},
+...(global.db.data || {})
+}
+
+if (global.db) setInterval(async () => {
+if (global.db.data) await global.db.write()
+  }, 30 * 1000)
+
 async function startHisoka() {
-let { version, isLatest } = await fetchLatestBaileysVersion()
+let version = await fetchJson('https://dikaardnt.vercel.app/other/wawebversion')
 const hisoka = hisokaConnect({
 logger: pino({ level: 'silent' }),
 printQRInTerminal: true,
@@ -22,34 +57,9 @@ browser: ['Hisoka Multi Device','Safari','1.0.0'],
 auth: state,
 version
 })
-store.bind(hisoka.ev)
-hisoka.ev.on('message.delete', async (m) => {
-if (m.key.remoteJid == 'status@broadcast') return
-if (!m.key.fromMe) {
-m.message = (Object.keys(m.message)[0] === 'ephemeralMessage') ? m.message.ephemeralMessage.message : m.message
-const jam = moment.tz('Asia/Jakarta').format('HH:mm:ss')
-let d = new Date
-let c = hisoka.chats.get(m.key.remoteJid)
-let a = c.messages.dict[`${m.key.id}|${m.key.fromMe ? 1 : 0}`]
-let co3ntent = hisoka.generateForwardMessageContent(a, false)
-let c3type = Object.keys(co3ntent)[0]
-let locale = 'id'
-let gmt = new Date(0).getTime() - new Date('1 Januari 2021').getTime()
-let weton = ['Pahing', 'Pon','Wage','Kliwon','Legi'][Math.floor(((d * 1) + gmt) / 84600000) % 5]
-let week = d.toLocaleDateString(locale, { weekday: 'long' })
-let calender = d.toLocaleDateString(locale, {
-day: 'numeric',
-month: 'long',
-year: 'numeric'
-})
-hisoka.copyNForward(m.key.remoteJid, m.message)
-hisoka.sendMessage(m.key.remoteJid, `*「 Chat Delete Detected 」*
 
-› From : @${m.participant.split("@")[0]}
-› Type : ${c3type}
-› Date : ${jam} - ${week} ${weton} - ${calender}`, MessageType.text, {quoted: m.message, contextInfo: {"mentionedJid": [m.participant]}})
-}
-})
+store.bind(hisoka.ev)
+
 hisoka.ws.on('CB:call', async (json) => {
 const callerId = json.content[0].attrs['call-creator']
 if (json.content[0].tag == 'offer') {
@@ -59,6 +69,7 @@ await sleep(8000)
 await hisoka.updateBlockStatus(callerId, "block")
 }
 })
+
 hisoka.ev.on('messages.upsert', async chatUpdate => {
 //console.log(JSON.stringify(chatUpdate, undefined, 2))
 try {
@@ -74,32 +85,39 @@ require("./hisoka")(hisoka, m, chatUpdate, store)
 console.log(err)
 }
 })
+
 hisoka.ev.on('group-participants.update', async (anu) => {
 console.log(anu)
 try {
 let metadata = await hisoka.groupMetadata(anu.id)
 let participants = anu.participants
 for (let num of participants) {
+// Get Profile Picture User
 try {
 ppuser = await hisoka.profilePictureUrl(num, 'image')
 } catch {
 ppuser = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
 }
+
+// Get Profile Picture Group
 try {
 ppgroup = await hisoka.profilePictureUrl(anu.id, 'image')
 } catch {
 ppgroup = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
 }
+
 if (anu.action == 'add') {
-hisoka.sendMessage(from, { caption: `Welcome TO ${metadata.subject} @${num.split("@")[0]}\n*Jangan nakal ya kak><*`, image: { jpegThumbnail: ppuser }, templateButtons: buttonsDefault, footer: 'KID BOT-MD', mentions: [m.sender] })
+hisoka.sendMessage(anu.id, { image: { url: ppuser }, contextInfo: { mentionedJid: [num] }, caption: `Welcome To ${metadata.subject} @${num.split("@")[0]}` })
 } else if (anu.action == 'remove') {
-hisoka.sendMessage(from, { caption: `Leaving FROM ${metadata.subject} @${num.split("@")[0]}\n*Yah kakaknya keluar><*`, image: { jpegThumbnail: ppuser }, templateButtons: buttonsDefault, footer: 'KID BOT-MD', mentions: [m.sender] })
+hisoka.sendMessage(anu.id, { image: { url: ppuser }, contextInfo: { mentionedJid: [num] }, caption: `@${num.split("@")[0]} Leaving To ${metadata.subject}` })
 }
 }
 } catch (err) {
 console.log(err)
 }
 })
+
+// Setting
 hisoka.decodeJid = (jid) => {
 if (!jid) return jid
 if (/:\d+@/gi.test(jid)) {
@@ -107,12 +125,14 @@ let decode = jidDecode(jid) || {}
 return decode.user && decode.server && decode.user + '@' + decode.server || jid
 } else return jid
 }
+
 hisoka.ev.on('contacts.update', update => {
 for (let contact of update) {
 let id = hisoka.decodeJid(contact.id)
 if (store && store.contacts) store.contacts[id] = { id, name: contact.notify }
 }
 })
+
 hisoka.getName = (jid, withoutContact  = false) => {
 id = hisoka.decodeJid(jid)
 withoutContact = hisoka.withoutContact || withoutContact 
@@ -130,28 +150,26 @@ hisoka.user :
 (store.contacts[id] || {})
 return (withoutContact ? '' : v.name) || v.subject || v.verifiedName || PhoneNumber('+' + jid.replace('@s.whatsapp.net', '')).getNumber('international')
 }
+
 hisoka.sendContact = async (jid, kon, quoted = '', opts = {}) => {
 let list = []
 for (let i of kon) {
 list.push({
 displayName: await hisoka.getName(i + '@s.whatsapp.net'),
-vcard: 'BEGIN:VCARD\n'
-+ 'VERSION:3.0\n' 
-+ 'FN:KunzxD\n'
-+ 'ORG:Developer KID BOT;\n'
-+ 'item1.TEL;waid=6287778886786:+62 87778886786\n'
-+ 'item1.X-ABLabel:Creator KID BOT\n'
-+ 'item2.TEL;waid=628179269000:+62 8179269000\n'
-+ 'item2.X-ABLabel:2nd Number\n'
-+ 'item3.EMAIL;type=INTERNET:KunzxD404@gmail.com\n'
-+ 'item3.X-ABLabel:Email\n'
-+ 'item4.URL;Web: https://github.com/KunzxD404\n'
-+ 'item4.X-ABLabel:Github\n'
-+ 'END:VCARD'
+vcard: `BEGIN:VCARD\nVERSION:3.0
+N:${await hisoka.getName(i + '@s.whatsapp.net')}
+FN:${await hisoka.getName(i + '@s.whatsapp.net')}
+item1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Ponsel
+item2.EMAIL;type=INTERNET:KunzxD404@gmail.com
+item2.X-ABLabel:Email\nitem3.URL:https://instagram.com/iam_kunzx
+item3.X-ABLabel:Instagram
+item4.ADR:;;Indonesia;;;;
+item4.X-ABLabel:Region\nEND:VCARD`
 })
 }
 hisoka.sendMessage(jid, { contacts: { displayName: `${list.length} Kontak`, contacts: list }, ...opts }, { quoted })
 }
+
 hisoka.setStatus = (status) => {
 hisoka.query({
 tag: 'iq',
@@ -168,8 +186,11 @@ content: Buffer.from(status, 'utf-8')
 })
 return status
 }
+
 hisoka.public = true
+
 hisoka.serializeM = (m) => smsg(hisoka, m, store)
+
 hisoka.ev.on('connection.update', async (update) => {
 const { connection, lastDisconnect } = update	    
 if (connection === 'close') {
@@ -185,6 +206,7 @@ else hisoka.end(`Unknown DisconnectReason: ${reason}|${connection}`)
 }
 console.log('Connected...', update)
 })
+
 hisoka.ev.on('creds.update', saveState)
 
 // Add Other
@@ -490,7 +512,7 @@ let type = await FileType.fromBuffer(data) || {
 mime: 'application/octet-stream',
 ext: '.bin'
 }
-filename = path.join(__filename, '../src/' + new Date * 1 + '.' + type.ext)
+filename = path.join(__filename, '../dataB/' + new Date * 1 + '.' + type.ext)
 if (data && save) fs.promises.writeFile(filename, data)
 return {
 res,

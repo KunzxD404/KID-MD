@@ -6,11 +6,13 @@ zenzkey: '0bc3c59742f4',
 zekskey: 'nekonimastah',
 harkey: 'hardianto',
 xkey: 'D2oxu09LrV',
+xtkey: '9503ce33fdb96c1e',
+zekais: 'wmOHOtd2'
 }
-global.owner = ['6287778886786','62179269000']
+global.owner = ['6287778886786','628179269000']
 global.namebot = 'KID BOT-MD'
 global.premium = ['6281274578272']
-global.packname = 'KID BOT-MD'
+global.packname = 'KID BOT'
 global.author = 'Contact Owner\nInstagram : @iam_kunzx\nWhatsapp : 6287778886786'
 global.sessionName = 'session'
 global.prefa = ['','!','.','🐦','🐤','🗿']
@@ -30,7 +32,7 @@ endLimit: '*Limit Harian Anda Telah Habis, Limit Akan Direset Setiap Jam 12*',
 }
 global.limitawal = {
 premium: "Infinity",
-free: 25
+free: 35
 }
 
 let file = require.resolve(__filename)
