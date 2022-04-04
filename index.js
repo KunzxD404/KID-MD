@@ -11,21 +11,48 @@ const path = require('path')
 const PhoneNumber = require('awesome-phonenumber')
 const { imageToWebp, videoToWebp, writeExifImg, writeExifVid } = require('./lib/exif')
 const { smsg, isUrl, generateMessageTag, getBuffer, getSizeMedia, fetchJson, await, sleep } = require('./lib/myfunc')
-
+const but5 = [
+{
+"urlButton": {
+"displayText": "My Group",
+"url": "https://chat.whatsapp.com/GDZOBuMkFSCKw6mzDUDoPd"
+}
+},
+{
+"urlButton": {
+"displayText": "My Youtube",
+"url": "https://youtube.com/channel/UCUzeU3gvoQPV1joakMUOTtg"
+}
+},
+{
+"quickReplyButton": {
+"displayText": "Status Bot",
+"id": `.botstatus`
+}
+},
+{
+"quickReplyButton": {
+"displayText": "Owner",
+"id": `.owner`,
+}
+},
+{
+"quickReplyButton": {
+"displayText": "Script",
+"id": `.sc`
+}
+}
+]
 var low
 try {
   low = require('lowdb')
 } catch (e) {
   low = require('./lib/lowdb')
 }
-
 const { Low, JSONFile } = low
 const mongoDB = require('./lib/mongoDB')
-
 global.api = (name, path = '/', query = {}, apikeyqueryname) => (name in global.APIs ? global.APIs[name] : name) + path + (query || apikeyqueryname ? '?' + new URLSearchParams(Object.entries({ ...query, ...(apikeyqueryname ? { [apikeyqueryname]: global.APIKeys[name in global.APIs ? global.APIs[name] : name] } : {}) })) : '')
-
 const store = makeInMemoryStore({ logger: pino().child({ level: 'silent', stream: 'store' }) })
-
 global.opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse())
 global.db = new Low(
   /https?:\/\//.test(opts['db'] || '') ?
@@ -36,42 +63,31 @@ new cloudDBAdapter(opts['db']) : /mongodb/.test(opts['db']) ?
 global.db.data = {
 users: {},
 chats: {},
-sticker: {},
 database: {},
 game: {},
 settings: {},
 others: {},
 ...(global.db.data || {})
 }
-
 if (global.db) setInterval(async () => {
 if (global.db.data) await global.db.write()
   }, 30 * 1000)
-
 async function startHisoka() {
-let version = await fetchJson('https://dikaardnt.vercel.app/other/wawebversion')
 const hisoka = hisokaConnect({
 logger: pino({ level: 'silent' }),
 printQRInTerminal: true,
 browser: ['Hisoka Multi Device','Safari','1.0.0'],
-auth: state,
-version
+auth: state
 })
-
 store.bind(hisoka.ev)
-
 hisoka.ws.on('CB:call', async (json) => {
 const callerId = json.content[0].attrs['call-creator']
 if (json.content[0].tag == 'offer') {
-let pa7rick = await hisoka.sendContact(callerId, global.owner)
-hisoka.sendMessage(callerId, { text: `Sistem otomatis block!\nJangan menelpon bot!\nSilahkan Hubungi Owner Untuk Dibuka !`}, { quoted : pa7rick })
-await sleep(8000)
-await hisoka.updateBlockStatus(callerId, "block")
+hisoka.sendText(from, 'DONT CALL!!', m)
 }
 })
 
 hisoka.ev.on('messages.upsert', async chatUpdate => {
-//console.log(JSON.stringify(chatUpdate, undefined, 2))
 try {
 mek = chatUpdate.messages[0]
 if (!mek.message) return
@@ -85,27 +101,22 @@ require("./hisoka")(hisoka, m, chatUpdate, store)
 console.log(err)
 }
 })
-
 hisoka.ev.on('group-participants.update', async (anu) => {
 console.log(anu)
 try {
 let metadata = await hisoka.groupMetadata(anu.id)
 let participants = anu.participants
 for (let num of participants) {
-// Get Profile Picture User
 try {
 ppuser = await hisoka.profilePictureUrl(num, 'image')
 } catch {
 ppuser = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
 }
-
-// Get Profile Picture Group
 try {
 ppgroup = await hisoka.profilePictureUrl(anu.id, 'image')
 } catch {
 ppgroup = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
 }
-
 if (anu.action == 'add') {
 hisoka.sendMessage(anu.id, { image: { url: ppuser }, contextInfo: { mentionedJid: [num] }, caption: `Welcome To ${metadata.subject} @${num.split("@")[0]}` })
 } else if (anu.action == 'remove') {
@@ -116,8 +127,6 @@ hisoka.sendMessage(anu.id, { image: { url: ppuser }, contextInfo: { mentionedJid
 console.log(err)
 }
 })
-
-// Setting
 hisoka.decodeJid = (jid) => {
 if (!jid) return jid
 if (/:\d+@/gi.test(jid)) {
@@ -125,14 +134,12 @@ let decode = jidDecode(jid) || {}
 return decode.user && decode.server && decode.user + '@' + decode.server || jid
 } else return jid
 }
-
 hisoka.ev.on('contacts.update', update => {
 for (let contact of update) {
 let id = hisoka.decodeJid(contact.id)
 if (store && store.contacts) store.contacts[id] = { id, name: contact.notify }
 }
 })
-
 hisoka.getName = (jid, withoutContact  = false) => {
 id = hisoka.decodeJid(jid)
 withoutContact = hisoka.withoutContact || withoutContact 
@@ -150,7 +157,6 @@ hisoka.user :
 (store.contacts[id] || {})
 return (withoutContact ? '' : v.name) || v.subject || v.verifiedName || PhoneNumber('+' + jid.replace('@s.whatsapp.net', '')).getNumber('international')
 }
-
 hisoka.sendContact = async (jid, kon, quoted = '', opts = {}) => {
 let list = []
 for (let i of kon) {
@@ -169,7 +175,6 @@ item4.X-ABLabel:Region\nEND:VCARD`
 }
 hisoka.sendMessage(jid, { contacts: { displayName: `${list.length} Kontak`, contacts: list }, ...opts }, { quoted })
 }
-
 hisoka.setStatus = (status) => {
 hisoka.query({
 tag: 'iq',
@@ -188,7 +193,6 @@ return status
 }
 
 hisoka.public = true
-
 hisoka.serializeM = (m) => smsg(hisoka, m, store)
 
 hisoka.ev.on('connection.update', async (update) => {
@@ -206,7 +210,6 @@ else hisoka.end(`Unknown DisconnectReason: ${reason}|${connection}`)
 }
 console.log('Connected...', update)
 })
-
 hisoka.ev.on('creds.update', saveState)
 
 // Add Other
@@ -233,6 +236,27 @@ imageMessage: message.imageMessage,
 }
 }), options)
 hisoka.relayMessage(jid, template.message, { messageId: template.key.id })
+}
+
+/** Send Button 5 Gif
+ *
+ * @param {*} jid
+ * @param {*} text
+ * @param {*} footer
+ * @returns
+ */
+hisoka.send5ButGif = async (jid , text1 = '' , desc1 = '', yo) =>{
+var buatpesan = await generateWAMessageFromContent(m.chat, {
+"templateMessage": {
+"hydratedTemplate": {
+...yo.message,
+"hydratedContentText": text1,
+"hydratedFooterText": desc1,
+"hydratedButtons": but5
+}
+}
+}, {})
+hisoka.relayMessage(jid, buatpesan.message, { messageId: buatpesan.key.id })
 }
 
 /**
@@ -512,7 +536,7 @@ let type = await FileType.fromBuffer(data) || {
 mime: 'application/octet-stream',
 ext: '.bin'
 }
-filename = path.join(__filename, '../dataB/' + new Date * 1 + '.' + type.ext)
+filename = path.join(__filename, '../src/' + new Date * 1 + '.' + type.ext)
 if (data && save) fs.promises.writeFile(filename, data)
 return {
 res,
