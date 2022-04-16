@@ -49,20 +49,18 @@ WhatsApp bot is still in the development stage, so there are a few bugs
 WhatsApp Connection`](BETA, not working perfectly)
 
 ## Thanks To
-* [`@adiwajshing/baileys-md`](https://github.com/adiwajshing/baileys/tree/multi-device)
+* [`@adiwajshing`](https://github.com/adiwajshing/baileys/tree/multi-device)
 * [`Nurutomo`](https://github.com/Nurutomo)
 * [`Mhankbarbar`](https://github.com/MhankBarBar)
-* [`DikaArdnt/Hisoka-Morou`](https://github.com/DikaArdnt/Hisoka-Morou)
-* [`Febz`](github.com/febzofc)
+* [`DikaArdnt`](https://github.com/DikaArdnt/Hisoka-Morou)
+* [`Yuzzu`](https://github.com/yuzzukamiyaka)
+* [`Fatih Arridho`](https://github.com/FatihArridho)
+* [`zhwzein`](https://github.com/zhwzein)
+* [`CAF-ID`](https://github.com/CAF-ID)
 
 ## Penyedia Api
-* [`Zeks`](zeks.me)
-* [`Anto`](hardianto.xyz)
-* [`Rimuru`](myselfff.herokuapp.com)
 * [`Farhan`](api-xcoders.xyz)
 * [`Nurutomo`](api.xteam.xyz)
-* [`Zekais`](api.zekais.com)
-* [`Xfar`](https://github.com/xfar05/xfarr-api)
-* [`Hxz`](https://github.com/Hexagonz/Hexa-Api)
+* [`Vio`](violetics.pw)
 
 License: [MIT](https://en.wikipedia.org/wiki/MIT_License)

@@ -8,6 +8,7 @@ const yargs = require('yargs/yargs')
 const chalk = require('chalk')
 const FileType = require('file-type')
 const path = require('path')
+const _ = require('lodash')
 const PhoneNumber = require('awesome-phonenumber')
 const { imageToWebp, videoToWebp, writeExifImg, writeExifVid } = require('./lib/exif')
 const { smsg, isUrl, generateMessageTag, getBuffer, getSizeMedia, fetchJson, await, sleep } = require('./lib/myfunc')
@@ -60,6 +61,13 @@ new cloudDBAdapter(opts['db']) : /mongodb/.test(opts['db']) ?
   new mongoDB(opts['db']) :
   new JSONFile(`dataB/database.json`)
 )
+global.DATABASE = global.db // Backwards Compatibility
+global.loadDatabase = async function loadDatabase() {
+if (global.db.READ) return new Promise((resolve) => setInterval(function () { (!global.db.READ ? (clearInterval(this), resolve(global.db.data == null ? global.loadDatabase() : global.db.data)) : null) }, 1 * 1000))
+if (global.db.data !== null) return
+global.db.READ = true
+await global.db.read()
+global.db.READ = false
 global.db.data = {
 users: {},
 chats: {},
@@ -67,8 +75,12 @@ database: {},
 game: {},
 settings: {},
 others: {},
+sticker: {},
 ...(global.db.data || {})
 }
+global.db.chain = _.chain(global.db.data)
+}
+loadDatabase()
 if (global.db) setInterval(async () => {
 if (global.db.data) await global.db.write()
   }, 30 * 1000)
@@ -257,6 +269,142 @@ var buatpesan = await generateWAMessageFromContent(m.chat, {
 }
 }, {})
 hisoka.relayMessage(jid, buatpesan.message, { messageId: buatpesan.key.id })
+}
+
+/** Send List Menu
+ *
+ * @param {*} jid
+ * @param {*} text
+ * @param {*} footer
+ * @returns
+ */
+hisoka.sendListM = async (jid , text1 = '' , text2 = '', desc1 = '') =>{
+const template = generateWAMessageFromContent(m.key.remoteJid, proto.Message.fromObject({
+listMessage: {
+title: text1,
+description: text2,
+buttonText: 'Pilih Disini',
+listType: 1,
+footerText: namebot,
+mtype: 'listMessage',
+sections: [{
+"title": "List Menu",
+"rows": [
+{
+  "title": "All Menu",
+  "rowld": `.allmenu`,
+  "description": "View All Menu",
+},{
+  "title": "Anime Menu",
+  "rowId": `.animemenu`,
+  "description": "View Anime Menu",
+},{
+  "title": "Nsfw Menu",
+  "rowId": `.nsfwmenu`,
+  "description": "View Nsfw Menu",
+},{
+  "title": "Group Menu",
+  "rowId": `.groupmenu`,
+  "description": "View Group Menu",
+},{
+  "title": "Animal Menu",
+  "rowId": `.animalmenu`,
+  "description": "View Animal Menu",
+},{
+  "title": "Video Menu",
+  "rowId": `.videomenu`,
+  "description": "View Video Menu",
+},{
+  "title": "Downloader Menu",
+  "rowId": `.downloadermenu`,
+  "description": "View Downloader Menu",
+},{
+  "title": "Search Menu",
+  "rowId": `.searchmenu`,
+  "description": "View Search Menu",
+},{
+  "title": "Info Menu",
+  "rowId": `.infomenu`,
+  "description": "View Info Menu",
+},{
+  "title": "Social Menu",
+  "rowId": `.socialmenu`,
+  "description": "View Social Menu",
+},{
+  "title": "Games Menu",
+  "rowId": `.gamesmenu`,
+  "description": "View Games Menu",
+},{
+  "title": "Fun Menu",
+  "rowId": `.funmenu`,
+  "description": "View Fun Menu",
+},{
+  "title": "Rpg Menu",
+  "rowId": `.rpgmenu`,
+  "description": "View Rpg Menu",
+},{
+  "title": "Random Menu",
+  "rowId": `.randommenu`,
+  "description": "View Random Menu",
+},{
+  "title": "Islamic Menu",
+  "rowId": `.islamicmenu`,
+  "description": "View Religion Menu",
+},{
+  "title": "Voice Menu",
+  "rowId": `.voicemenu`,
+  "description": "View Voice Menu",
+},{
+  "title": "Primbon Menu",
+  "rowId": `.primbonmenu`,
+  "description": "View Primbon Menu",
+},{
+  "title": "Tools Menu",
+  "rowId": `.toolsmenu`,
+  "description": "View Tools Menu",
+},{
+  "title": "Canvas Menu",
+  "rowId": `.canvasmenu`,
+  "description": "View Canvas Menu",
+},{
+  "title": "Photo Filter Menu",
+  "rowId": `.photofmenu`,
+  "description": "View Photo Filter Menu",
+},{
+  "title": "Photo Oxy Menu",
+  "rowId": `.photoxymenu`,
+  "description": "View Photo Oxy Menu",
+},{
+  "title": "Text Pro Menu",
+  "rowId": `.textpromenu`,
+  "description": "View Text Pro Menu",
+},{
+  "title": "Ephoto Menu",
+  "rowId": `.ephotomenu`,
+  "description": "View Ephoto Menu",
+},{
+  "title": "Database Menu",
+  "rowId": `.databmenu`,
+  "description": "View Database Menu",
+},{
+  "title": "Main Menu",
+  "rowId": `.mainmenu`,
+  "description": "View Main Menu",
+},{
+  "title": "Owner Menu",
+  "rowId": `.ownermenu`,
+  "description": "View Owner Menu"
+}]}], "contextInfo": {
+  "stanzaId": m.key.id,
+  "participant": m.sender,
+  "quotedMessage": m.message
+}
+}}), { userJid: m.participant || m.key.remoteJid, quoted: m });
+return await hisoka.relayMessage(
+m.key.remoteJid,
+template.message,
+{ messageId: template.key.id }
+)
 }
 
 /**
