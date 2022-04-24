@@ -1123,8 +1123,6 @@ canvasMenu = `《 *Canvas Menu* 》
 *♟${prefix}challenger <reply image/sticker>*
 *♟${prefix}crush <reply image/sticker>*
 *♟${prefix}dictator <reply image/sticker>*
-*♟${prefix}vs <reply image/sticker>*
-*♟${prefix}toonify <reply image/sticker>*
 *♟${prefix}iphonex <reply image/sticker>*
 *♟${prefix}animeface <reply image/sticker>*
 *♟${prefix}stickbug <reply image/sticker>*
@@ -2686,6 +2684,7 @@ m.reply(anu.result)}
 break
 case 'emojimix': {
 if (!text) throw `Example : ${prefix + command} 😅+🤔`
+reply2(mess.wait)
 let [emoji1, emoji2] = text.split`+`
 let anu = await fetchJson(`https://tenor.googleapis.com/v2/featured?key=AIzaSyAyimkuYQYF_FXVALexPuGQctUWRURdCYQ&contentfilter=high&media_filter=png_transparent&component=proactive&collection=emoji_kitchen_v5&q=${encodeURIComponent(emoji1)}_${encodeURIComponent(emoji2)}`)
 for (let res of anu.results) {
@@ -4528,7 +4527,7 @@ hisoka.sendMessage(m.chat, { image: { url: `https://some-random-api.ml/canvas/${
 await fs.unlinkSync(media)
 }
 break
-case 'tobecontinue': case 'wasted': case 'wanted': case 'triggered': case 'greyscale': case 'jail': case 'darkness': case 'delete': case 'invert': case 'joke': case 'sepia': case 'blur': case 'circle': case 'fuse': case 'gay': case 'facepalm': case 'beautiful': case 'trash': case 'scary': case 'rejected': case 'brazzers': case 'ps4': case 'distort': case 'moustache': case 'frame': case 'emboss': case 'missionpassed': case 'spongebob': case 'discordhouse': case 'karenhave': case 'thanos': case 'approved': case 'burn': case 'challenger': case 'crush': case 'dictator': case 'vs': case 'toonify': case 'iphonex': case 'animeface': case 'stickbug': case 'badut2': case 'badut3': {
+case 'tobecontinue': case 'wasted': case 'wanted': case 'triggered': case 'greyscale': case 'jail': case 'darkness': case 'delete': case 'invert': case 'joke': case 'sepia': case 'blur': case 'circle': case 'fuse': case 'gay': case 'facepalm': case 'beautiful': case 'trash': case 'scary': case 'rejected': case 'brazzers': case 'ps4': case 'distort': case 'moustache': case 'frame': case 'emboss': case 'missionpassed': case 'spongebob': case 'discordhouse': case 'karenhave': case 'thanos': case 'approved': case 'burn': case 'challenger': case 'crush': case 'dictator': case 'iphonex': case 'animeface': case 'stickbug': case 'badut2': case 'badut3': {
 if (!quoted) throw 'reply Image'
 reply2(mess.wait)
 let media = await hisoka.downloadAndSaveMediaMessage(quoted)
