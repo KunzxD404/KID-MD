@@ -8,7 +8,7 @@ xtkey: '9503ce33fdb96c1e',
 vikey: '53fb-eb36-afda'
 }
 global.namebot = 'KID BOT-MD'
-global.owner = ['6287778886786','628179269000']
+global.owner = ['628179269000']
 global.premium = ['628179269000']
 global.banned = ['628123456789']
 global.packname = 'KID BOT'
